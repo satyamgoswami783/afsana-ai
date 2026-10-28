@@ -5,7 +5,7 @@ import BASE_URL from "../Config";
 import api from "../interceptors/axiosInterceptor";
 import ReCAPTCHA from "react-google-recaptcha";
 
-const InquiryForm = () => {
+const InquiryForm = ({ onClose }) => {
   const [showInquiryModal, setShowInquiryModal] = useState(false);
   const [getData, setData] = useState([]);
   const [phoneError, setPhoneError] = useState(""); // New state for phone error
@@ -99,6 +99,7 @@ const InquiryForm = () => {
 
   const handleCloseInquiryModal = () => {
     setShowInquiryModal(false);
+    if (onClose) onClose();
     setPhoneError(""); // Reset phone error when closing modal
     setRecaptchaValue(null);
     setNewInquiry({

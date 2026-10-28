@@ -38,19 +38,19 @@ const styles = {
     position: "relative",
     borderRadius: 20,
     padding: 1,
-    background: "linear-gradient(135deg, rgba(56,189,248,0.3), rgba(99,102,241,0.2), rgba(56,189,248,0.1))",
+    background: "linear-gradient(135deg, rgba(16,185,129,0.3), rgba(245,158,11,0.15), rgba(16,185,129,0.06))",
     transition: "all 0.4s cubic-bezier(.4,0,.2,1)",
     height: "100%",
   },
   cardOuterHover: {
-    background: "linear-gradient(135deg, rgba(56,189,248,0.7), rgba(99,102,241,0.5), rgba(56,189,248,0.3))",
+    background: "linear-gradient(135deg, rgba(52,211,153,0.7), rgba(16,185,129,0.5), rgba(245,158,11,0.3))",
     transform: "translateY(-6px)",
-    boxShadow: "0 20px 50px rgba(56,189,248,0.15), 0 0 30px rgba(56,189,248,0.08)",
+    boxShadow: "0 20px 50px rgba(0,0,0,0.65), 0 0 25px rgba(16,185,129,0.18)",
   },
 
   /* Card inner */
   cardInner: {
-    background: "linear-gradient(160deg, #1e293b 0%, #0f172a 100%)",
+    background: "linear-gradient(160deg, #101813 0%, #080d0a 100%)",
     borderRadius: 19,
     padding: "28px 24px 24px",
     display: "flex",
@@ -68,7 +68,7 @@ const styles = {
     width: 120,
     height: 120,
     borderRadius: "50%",
-    background: "radial-gradient(circle, rgba(56,189,248,0.12) 0%, transparent 70%)",
+    background: "radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%)",
     pointerEvents: "none",
   },
 
@@ -76,9 +76,9 @@ const styles = {
   accentBar: {
     height: 3,
     borderRadius: 4,
-    background: "linear-gradient(90deg, #38bdf8, #6366f1, #38bdf8)",
+    background: "linear-gradient(90deg, #10b981, #fbbf24, #10b981)",
     marginBottom: 22,
-    opacity: 0.7,
+    opacity: 0.85,
   },
 
   /* Logo + name header */
@@ -92,8 +92,8 @@ const styles = {
     width: 52,
     height: 52,
     borderRadius: 14,
-    background: "rgba(56,189,248,0.1)",
-    border: "1px solid rgba(56,189,248,0.2)",
+    background: "rgba(16,185,129,0.08)",
+    border: "1px solid rgba(16,185,129,0.2)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -120,12 +120,12 @@ const styles = {
     display: "inline-flex",
     alignItems: "center",
     gap: 6,
-    background: "rgba(56,189,248,0.08)",
-    border: "1px solid rgba(56,189,248,0.15)",
+    background: "rgba(16,185,129,0.08)",
+    border: "1px solid rgba(16,185,129,0.2)",
     borderRadius: 50,
     padding: "5px 14px",
     fontSize: "0.8rem",
-    color: "#7dd3fc",
+    color: "#6ee7b7",
     fontWeight: 500,
     marginBottom: 18,
   },
@@ -139,14 +139,14 @@ const styles = {
     fontWeight: 700,
     textTransform: "uppercase",
     letterSpacing: "0.1em",
-    color: "#38bdf8",
+    color: "#34d399",
     marginBottom: 10,
   },
   sectionIcon: {
     width: 20,
     height: 20,
     borderRadius: 6,
-    background: "rgba(56,189,248,0.12)",
+    background: "rgba(16,185,129,0.12)",
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
@@ -161,12 +161,12 @@ const styles = {
     marginBottom: 16,
   },
   chip: {
-    background: "rgba(255,255,255,0.06)",
+    background: "rgba(255,255,255,0.04)",
     border: "1px solid rgba(255,255,255,0.08)",
     borderRadius: 50,
     padding: "4px 12px",
     fontSize: "0.78rem",
-    color: "#cbd5e1",
+    color: "#e2e8f0",
     fontWeight: 500,
     transition: "all 0.2s ease",
   },
@@ -185,7 +185,8 @@ const styles = {
     width: 6,
     height: 6,
     borderRadius: "50%",
-    background: "#38bdf8",
+    background: "#10b981",
+    boxShadow: "0 0 6px rgba(16,185,129,0.6)",
     marginTop: 7,
     flexShrink: 0,
   },
@@ -194,7 +195,7 @@ const styles = {
   readMoreBtn: {
     background: "none",
     border: "none",
-    color: "#38bdf8",
+    color: "#34d399",
     fontSize: "0.82rem",
     fontWeight: 600,
     cursor: "pointer",
@@ -224,7 +225,7 @@ const styles = {
     width: 28,
     height: 28,
     borderRadius: 8,
-    background: "rgba(56,189,248,0.08)",
+    background: "rgba(16,185,129,0.08)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -235,7 +236,7 @@ const styles = {
   /* Divider */
   divider: {
     height: 1,
-    background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)",
+    background: "linear-gradient(90deg, transparent, rgba(16,185,129,0.15), transparent)",
     margin: "12px 0 16px",
     border: "none",
   },
@@ -247,20 +248,21 @@ const styles = {
     padding: "12px 0",
     borderRadius: 12,
     border: "none",
-    fontWeight: 700,
+    fontWeight: 800,
     fontSize: "0.95rem",
     textAlign: "center",
-    background: "linear-gradient(135deg, #38bdf8, #6366f1)",
+    background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
     color: "#ffffff",
     cursor: "pointer",
     transition: "all 0.3s cubic-bezier(.4,0,.2,1)",
     textDecoration: "none",
     letterSpacing: "0.02em",
-    boxShadow: "0 4px 15px rgba(56,189,248,0.25)",
+    boxShadow: "0 4px 15px rgba(16,185,129,0.3)",
   },
   applyBtnHover: {
     transform: "translateY(-2px)",
-    boxShadow: "0 8px 25px rgba(56,189,248,0.35)",
+    background: "linear-gradient(135deg, #34d399 0%, #10b981 100%)",
+    boxShadow: "0 8px 25px rgba(16,185,129,0.5)",
   },
 
   /* Delete button */
@@ -340,7 +342,7 @@ const UniversityCards = () => {
     <div style={styles.section}>
       {/* ── Section Header ── */}
       <h2 style={styles.heading}>
-        Top International <span style={{ background: "linear-gradient(90deg,#38bdf8,#6366f1)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Universities</span>
+        Top International <span style={{ background: "linear-gradient(90deg, #34d399, #10b981, #fbbf24)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Universities</span>
       </h2>
       <p style={styles.subHeading}>Explore world-class universities and start your global education journey</p>
 
@@ -372,6 +374,7 @@ const UniversityCards = () => {
               >
                 {/* Card Outer — gradient border */}
                 <div
+                  className="university-card-outer"
                   style={{
                     ...styles.cardOuter,
                     ...(isHovered ? styles.cardOuterHover : {}),
@@ -380,7 +383,7 @@ const UniversityCards = () => {
                   onMouseLeave={() => setHoveredCard(null)}
                 >
                   {/* Card Inner */}
-                  <div style={styles.cardInner}>
+                  <div className="university-card-inner" style={styles.cardInner}>
                     {/* Decorative glow */}
                     <div style={styles.glowCircle} />
 
@@ -400,7 +403,7 @@ const UniversityCards = () => {
                           }}
                         />
                       </div>
-                      <h5 style={styles.universityName}>{university.name}</h5>
+                      <h5 className="university-name" style={styles.universityName}>{university.name}</h5>
                     </div>
 
                     {/* ── Location ── */}
@@ -418,7 +421,7 @@ const UniversityCards = () => {
                     <div style={styles.chipRow}>
                       {displayPrograms.length > 0 ? (
                         displayPrograms.map((program, idx) => (
-                          <span key={idx} style={styles.chip}>{program}</span>
+                          <span key={idx} className="university-program-chip" style={styles.chip}>{program}</span>
                         ))
                       ) : (
                         <span style={{ ...styles.chip, opacity: 0.5 }}>No programs available</span>
@@ -433,7 +436,7 @@ const UniversityCards = () => {
                     <div style={{ marginBottom: 12 }}>
                       {displayHighlights.length > 0 ? (
                         displayHighlights.map((highlight, idx) => (
-                          <div key={idx} style={styles.highlightItem}>
+                          <div key={idx} className="university-highlight-item" style={styles.highlightItem}>
                             <span style={styles.highlightDot} />
                             <span>{highlight}</span>
                           </div>
@@ -465,11 +468,11 @@ const UniversityCards = () => {
                       Contact Info
                     </div>
                     <div style={styles.contactRow}>
-                      <div style={styles.contactItem}>
+                      <div className="university-contact-item" style={styles.contactItem}>
                         <span style={styles.contactIcon}>📱</span>
                         <span>{university.contact_phone || "N/A"}</span>
                       </div>
-                      <div style={styles.contactItem}>
+                      <div className="university-contact-item" style={styles.contactItem}>
                         <span style={styles.contactIcon}>✉️</span>
                         <span>{university.contact_email || "N/A"}</span>
                       </div>

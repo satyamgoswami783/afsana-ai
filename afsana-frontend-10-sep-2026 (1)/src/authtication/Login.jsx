@@ -5,14 +5,14 @@ import BASE_URL from "../Config";
 import Swal from 'sweetalert2';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { FaUser, FaLock } from "react-icons/fa";
+import { FaUser, FaLock, FaEye, FaEyeSlash, FaCheckCircle } from "react-icons/fa";
 import { IoChevronBackCircleSharp } from "react-icons/io5";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 import axios from "axios";
 import api from "../interceptors/axiosInterceptor";
 import { auth, provider, signInWithPopup } from "../interceptors/firebase"; // adjust path as needed
 import RegisterDeviceToken from "./RegisterDeviceToken";
+import "./Login.css";
 
 const Login = ({ setLogin }) => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -237,231 +237,144 @@ const Login = ({ setLogin }) => {
 
 
   return (
-    <main style={{
-      display: "flex", minHeight: "100vh", backgroundColor: "#b4ccf0",
-      alignItems: "center", justifyContent: "center",
-    }}>
-      <div style={{
-        backgroundColor: "#fff",
-        width: "90%",
-        maxWidth: "1000px",
-        display: "flex",
-        borderRadius: "20px",
-        overflow: "hidden",
-        boxShadow: "0 8px 16px rgba(0,0,0,0.1)"
-      }}>
+    <main className="login-page-wrapper">
+      <div className="login-card-container">
+        {/* Left Showcase Panel with 4K Student Image */}
+        <div className="login-showcase-panel">
+          <img
+            src="/img/student_login_hero.jpg"
+            alt="International University Student"
+            className="login-showcase-bg"
+          />
+          <div className="login-showcase-overlay" />
 
+          {/* Top Badge */}
+          <div className="login-showcase-top">
+            <div className="login-badge-pill">
+              <span className="login-badge-dot" />
+              <span>Kiaan Technology Global</span>
+            </div>
+          </div>
 
-        {/* Left Image Section */}
-        <div className="loginimg" style={{
-          flex: 1,
-          backgroundColor: "#eef3fc",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "40px"
-        }}>
-          <img src="https://abcschool.institute.org.in/assets/images/student-login-2.svg" alt="Student"
-            style={{ maxWidth: "100%", height: "auto" }} />
+          {/* Bottom Content / Highlights */}
+          <div className="login-showcase-bottom">
+            <h2 className="login-showcase-heading">
+              Shape Your <span>Global Future</span>
+            </h2>
+            <p className="login-showcase-desc">
+              Access 500+ top universities worldwide. Seamless application tracking, counselor guidance, and visa processing all in one place.
+            </p>
+            <div className="login-stats-grid">
+              <div className="login-stat-chip">
+                <strong>500+</strong> Universities
+              </div>
+              <div className="login-stat-chip">
+                <strong>98.5%</strong> Visa Rate
+              </div>
+              <div className="login-stat-chip">
+                <strong>30+</strong> Countries
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Right Form Section */}
-        <div style={{ flex: 1, padding: "40px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-          <h2 style={{ color: "#1d4ed8", marginBottom: "10px" }}>Student Recruitment</h2>
-          <p style={{ marginBottom: "20px", color: "#555" }}>Enter your details to login to your account</p>
-          {/* Divider */}
-
-
-          {/* Google Button */}
-<>
-  <style>
-    {`
-      .google-login-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        background-color: #fff;
-        color: #444;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        padding: 10px;
-        width: 100%;
-        font-weight: 500;
-        font-size: 15px;
-        cursor: pointer;
-        transition: background 0.3s;
-        text-align: center;
-      }
-
-      .google-login-btn:hover {
-        background-color: #f7f7f7;
-      }
-
-      .google-login-btn img {
-        width: 22px;
-        height: 22px;
-        object-fit: contain;
-      }
-
-      @media (max-width: 480px) {
-        .google-login-btn {
-          font-size: 14px;
-          padding: 8px;
-        }
-
-        .google-login-btn img {
-          width: 20px;
-          height: 20px;
-        }
-      }
-    `}
-  </style>
-
-  {/* <button className="google-login-btn" onClick={handleGoogleLogin}>
-    <img
-      src="https://developers.google.com/identity/images/g-logo.png"
-      alt="Google"
-    />
-    <span>Continue with Google</span>
-  </button> */}
-</>
-
-
-
-
-          <div style={{
-            display: "flex",
-            alignItems: "center",
-            margin: "20px 0"
-          }}>
-            <hr style={{ flex: 1, border: "none", height: "1px", backgroundColor: "#ccc" }} />
-            <hr style={{ flex: 1, border: "none", height: "1px", backgroundColor: "#ccc" }} />
+        {/* Right Form Panel */}
+        <div className="login-form-panel">
+          {/* Brand Header */}
+          <div className="login-brand-header">
+            <Link to="/">
+              <img
+                src="/img/kiaan_logo.png"
+                alt="Kiaan Technology"
+                className="login-brand-logo"
+              />
+            </Link>
+            <h1 className="login-title">
+              Student <span className="login-title-accent">Recruitment</span>
+            </h1>
+            <p className="login-subtitle">
+              Enter your credentials to securely access your portal
+            </p>
           </div>
 
           {/* Location Permission Status Indicator */}
           {gpsStatus === "captured" && (
-            <div style={{ backgroundColor: "#d1e7dd", color: "#0f5132", padding: "10px 14px", borderRadius: "8px", fontSize: "13px", marginBottom: "15px", display: "flex", alignItems: "center" }}>
-              <i className="fa-solid fa-circle-check" style={{ marginRight: "8px", fontSize: "16px", color: "#198754" }}></i>
-              <span>Location Access Granted (GPS Active)</span>
+            <div className="login-location-banner granted">
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <FaCheckCircle style={{ color: "#10b981", fontSize: "1rem" }} />
+                <span>GPS Location Verified (Secure Session)</span>
+              </div>
             </div>
           )}
           {gpsStatus === "pending" && (
-            <div style={{ backgroundColor: "#fff3cd", color: "#664d03", padding: "10px 14px", borderRadius: "8px", fontSize: "13px", marginBottom: "15px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <span><i className="fa-solid fa-location-crosshairs" style={{ marginRight: "8px" }}></i> Allow location for exact login security</span>
-              <button type="button" onClick={requestLocation} style={{ backgroundColor: "#1d4ed8", color: "#fff", border: "none", padding: "4px 12px", borderRadius: "6px", fontSize: "12px", cursor: "pointer", fontWeight: "600" }}>Allow Location</button>
+            <div className="login-location-banner pending">
+              <span>📍 Allow location for security verification</span>
+              <button
+                type="button"
+                onClick={requestLocation}
+                className="login-allow-location-btn"
+              >
+                Allow Location
+              </button>
             </div>
           )}
 
+          {/* Form */}
           <form onSubmit={handleLogin}>
-            <div style={{ marginBottom: "15px", position: "relative" }}>
-              <FaUser style={{
-                position: "absolute",
-                left: "12px",
-                top: "50%",
-                transform: "translateY(-50%)",
-                color: "#888"
-              }} />
-              <input type="email" name="email"
-                placeholder="Enter your username/email"
+            <div className="login-input-group">
+              <FaUser className="login-input-icon" />
+              <input
+                type="email"
+                name="email"
+                className="login-input-field"
+                placeholder="Enter your username or email"
                 value={formData.email}
                 autoComplete="off"
                 onChange={handleChange}
-                style={{
-                  width: "100%",
-                  padding: "10px 10px 10px 40px",
-                  borderRadius: "8px",
-                  border: "1px solid #ccc",
-                  outline: "none"
-                }} required />
+                required
+              />
             </div>
-            <div style={{ marginBottom: "20px", position: "relative" }}>
-              <FaLock style={{
-                position: "absolute", left: "12px",
-                top: "50%", transform: "translateY(-50%)", color: "#888"
-              }} />
 
+            <div className="login-input-group">
+              <FaLock className="login-input-icon" />
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
+                className="login-input-field"
+                style={{ paddingRight: "48px" }}
                 autoComplete="off"
                 placeholder="Enter your password"
                 value={formData.password}
                 onChange={handleChange}
-                style={{
-                  width: "100%",
-                  padding: "10px 40px 10px 40px", // leave room for the icon
-                  borderRadius: "8px",
-                  border: "1px solid #ccc",
-                  outline: "none"
-                }}
                 required
               />
-
-              {/* Eye Icon Toggle */}
               <span
                 onClick={() => setShowPassword(!showPassword)}
-                style={{
-                  position: "absolute",
-                  right: "12px",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  cursor: "pointer",
-                  color: "#888"
-                }}
+                className="login-password-toggle"
+                title={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </span>
             </div>
 
+            <button type="submit" className="login-submit-btn">
+              <span>Sign In to Portal</span>
+              <span>→</span>
+            </button>
 
-            <button type="submit" style={{
-              width: "100%", padding: "10px", borderRadius: "8px",
-              backgroundColor: "#1d4ed8", color: "#fff", border: "none",
-              fontWeight: "bold",
-              cursor: "pointer"
-            }}>Login </button>
-             {isLoggedIn && <RegisterDeviceToken />}
+            {isLoggedIn && <RegisterDeviceToken />}
           </form>
 
-          <div style={{
-            marginTop: "20px",
-            textAlign: "center", fontSize: "14px", color: "#666"
-          }}>
+          {/* Footer Actions */}
+          <div className="login-actions-footer">
+            <Link to="/forgotpassword" className="login-forgot-link">
+              Forgot Password?
+            </Link>
 
-            {/* <Link
-              to="/signup"
-              style={{
-                color: "#1d4ed8",
-                textDecoration: "none",
-                fontWeight: "bold",
-              }}
-            >
-              You don't have an account? signup
-            </Link> */}
-            {/* <p style={{ marginTop: "15px" }}>
-              Don’t have an account? <a href="#" style={{ color: "#1d4ed8" }}>Sign up Now</a>
-            </p> */}
-            <div className="">
-              <Link to="/forgotpassword" >
-              <p className="" style={{color:"blue" , fontSize:"bold" ,cursor:"pointer"}}>Forgot Password</p>
-           </Link>
-            </div>
-            <div className="mt-4">
-
-
-              <Link to="/" style={{
-                width: "35%",
-                padding: "8px",
-                borderRadius: "8px",
-                backgroundColor: "#1d4ed8",
-                color: "#fff",
-                border: "none",
-                cursor: "pointer"
-              }}>
-                <IoChevronBackCircleSharp />  Back To Home
-              </Link>
-            </div>
+            <Link to="/" className="login-back-home-btn">
+              <IoChevronBackCircleSharp style={{ fontSize: "1.15rem" }} />
+              <span>Back To Home</span>
+            </Link>
           </div>
         </div>
       </div>
