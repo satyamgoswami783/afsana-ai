@@ -52,9 +52,10 @@ export const createCounselor = async (req, res) => {
     }
 
 
-    const [existing] = await db.query('SELECT id FROM users WHERE email = ?', [email]);
+    const cleanEmail = email.trim().toLowerCase();
+    const [existing] = await db.query('SELECT id FROM users WHERE LOWER(TRIM(email)) = ?', [cleanEmail]);
     if (existing.length > 0) {
-      return res.status(409).json({ message: 'User already exists' });
+      return res.status(409).json({ message: 'User with this email already exists' });
     }
     const hashed = await bcrypt.hash(password, 10);
     const [counselorResult] = await db.query(
@@ -72,7 +73,7 @@ export const createCounselor = async (req, res) => {
 
     const [userResult] = await db.query(
       'INSERT INTO users (email, password, full_name, role, user_id, counselor_id) VALUES (?, ?, ?, ?, ?, ?)',
-      [email, hashed, full_name, role, user_id, counselorId]
+      [cleanEmail, hashed, full_name, role, user_id, counselorId]
     );
 
     if (!userResult.insertId) {

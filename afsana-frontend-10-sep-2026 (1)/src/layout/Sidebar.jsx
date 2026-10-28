@@ -18,7 +18,7 @@ import {
   MessageCircle
 } from "lucide-react";
 
-const Sidebar = ({ login, collapsed, toggleSidebar }) => {
+const Sidebar = ({ login, collapsed, toggleSidebar, menuItemClick }) => {
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
@@ -42,11 +42,25 @@ const Sidebar = ({ login, collapsed, toggleSidebar }) => {
   const isSubmenuActive = (paths) => paths?.some(path => location.pathname.startsWith(path)) || false;
 
   const handleMenuItemClick = (item) => {
+    if (collapsed) {
+      if (typeof toggleSidebar === "function") {
+        toggleSidebar();
+      } else if (typeof menuItemClick === "function") {
+        menuItemClick();
+      }
+      if (item.submenu) {
+        setOpenSubmenu(item.name);
+      } else if (item.path) {
+        navigate(item.path);
+      }
+      return;
+    }
+
     if (item.submenu) {
       toggleSubmenu(item.name);
-    } else {
+    } else if (item.path) {
       navigate(item.path);
-      if (isMobile) {
+      if (isMobile && typeof toggleSidebar === "function") {
         toggleSidebar();
       }
     }
@@ -338,6 +352,7 @@ const Sidebar = ({ login, collapsed, toggleSidebar }) => {
       >
         <div
           className="menu-link"
+          title={item.name}
           onClick={() => handleMenuItemClick(item)}
         >
           {item.icon}
@@ -373,6 +388,16 @@ const Sidebar = ({ login, collapsed, toggleSidebar }) => {
       ${collapsed === true ? "collapsed" : ""}
       ${collapsed === "mini" ? "collapsed-desktop" : ""}
     `}>
+      <div className="sidebar-toggle-wrapper" style={{ display: "flex", justifyContent: collapsed ? "center" : "flex-end", padding: "10px 14px 4px" }}>
+        <button
+          className="btn btn-sm btn-light border"
+          style={{ width: "32px", height: "32px", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "8px", cursor: "pointer" }}
+          onClick={toggleSidebar}
+          title={collapsed ? "Expand Menu" : "Collapse Menu"}
+        >
+          <RiMenuFold3Line style={{ transform: collapsed ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} size={16} />
+        </button>
+      </div>
       <div className="sidebar-menu">
         <ul className="menu">{renderMenuItems()}</ul>
       </div>

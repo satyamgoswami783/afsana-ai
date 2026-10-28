@@ -309,7 +309,7 @@ function App() {
   const handleTaskAssign = (task) => {
     setTasks([...tasks, task]);
   };
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(window.innerWidth <= 768);
   const menusidebarcollaps = () => {
     setIsSidebarCollapsed(false);
   };

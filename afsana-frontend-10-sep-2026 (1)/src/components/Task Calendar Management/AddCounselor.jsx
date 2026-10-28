@@ -159,7 +159,8 @@ const AddCounselor = () => {
       setShowModal(false);
       resetForm();
     } catch (err) {
-      Swal.fire("Error", "Operation failed", "error");
+      const errorMsg = err.response?.data?.message || "Operation failed";
+      Swal.fire("Error", errorMsg, "error");
     }
   };
 
