@@ -28,6 +28,38 @@ const App = () => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [recaptchaValue, setRecaptchaValue] = useState(null);
 
+  // Light / Dark Theme State
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return localStorage.getItem("app_theme") !== "light";
+  });
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.remove("light-theme");
+      document.body.classList.add("dark-theme");
+      localStorage.setItem("app_theme", "dark");
+    } else {
+      document.body.classList.remove("dark-theme");
+      document.body.classList.add("light-theme");
+      localStorage.setItem("app_theme", "light");
+    }
+  }, [isDarkMode]);
+
+  const toggleTheme = () => {
+    setIsDarkMode((prev) => !prev);
+  };
+
+  // Scroll listener to keep navbar fixed and styled smoothly on scroll
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   // 2) Handlers to open/close the modal
   const handleOpenInquiry = () => setShowInquiryModal(true);
   const handleCloseInquiry = () => setShowInquiryModal(false);
@@ -220,24 +252,25 @@ const App = () => {
     navigate("/signup")
   }
   return (
-    <div className="bg-dark text-white">
+    <div className={`landing-page-root ${isDarkMode ? "dark-theme-root" : "light-theme-root"}`} style={{ minHeight: '100vh', background: 'transparent' }}>
       <PaymentFormModal
         show={showPaymentModal}
         handleClose={handleClosePaymentModal}
       />
-      {/* Navbar */}
-      <Navbar expand="lg" className="navbarHome">
+      {/* Navbar — Fixed on top and stays during scroll */}
+      <Navbar expand="lg" fixed="top" className={`navbarHome ${isScrolled ? "scrolled" : ""}`}>
         <Container>
           <Navbar.Brand href="#" className="d-flex align-items-center me-4">
             <img
-              src="/img/logo.png"
-              alt="Study First Info Ltd."
-              height="35"
+              src="/img/kiaan_logo.png"
+              alt="Kiaan Technology"
+              height="44"
               className="me-2"
+              style={{ objectFit: 'contain' }}
             />
             <div className="brand-text ms-2 d-flex flex-column">
-              <span className="fw-bold m-0" style={{ lineHeight: '1' }}>Study First</span>
-              <span style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.7)', letterSpacing: '2px', textTransform: 'uppercase' }}>International Education</span>
+              <span className="fw-bold m-0" style={{ lineHeight: '1', fontSize: '1.45rem' }}>Kiaan</span>
+              <span style={{ fontSize: '0.62rem', color: isDarkMode ? '#34d399' : '#059669', letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700 }}>Technology</span>
             </div>
           </Navbar.Brand>
 
@@ -250,30 +283,41 @@ const App = () => {
             </Nav>
 
             <div className="d-flex align-items-center gap-3">
+              {/* Light / Dark Mode Toggle Button */}
+              <button
+                type="button"
+                className="theme-toggle-btn"
+                onClick={toggleTheme}
+                title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                aria-label="Toggle Theme"
+              >
+                {isDarkMode ? "☀️" : "🌙"}
+              </button>
+
               <Button
                 className="d-flex align-items-center px-4"
                 onClick={handleOpenPaymentModal}
-                style={{ borderRadius: '50px', background: 'linear-gradient(135deg, #38bdf8, #6366f1)', border: 'none', color: '#fff', fontWeight: 700, boxShadow: '0 4px 15px rgba(56,189,248,0.25)' }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(56,189,248,0.4)'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 15px rgba(56,189,248,0.25)'; }}
+                style={{ borderRadius: '50px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', border: 'none', color: '#ffffff', fontWeight: 800, boxShadow: '0 4px 15px rgba(16,185,129,0.3)' }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.background = 'linear-gradient(135deg, #34d399 0%, #10b981 100%)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(16,185,129,0.5)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)'; e.currentTarget.style.boxShadow = '0 4px 15px rgba(16,185,129,0.3)'; }}
               >
                 <i className="fas fa-credit-card me-2"></i> Enroll Now
               </Button>
               <Link
                 to="/login"
                 className="btn px-4 fw-bold"
-                style={{ borderRadius: '50px', background: 'rgba(56,189,248,0.1)', border: '1px solid rgba(56,189,248,0.3)', color: '#38bdf8', transition: 'all 0.3s ease' }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(56,189,248,0.2)'; e.currentTarget.style.color = '#fff'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(56,189,248,0.1)'; e.currentTarget.style.color = '#38bdf8'; }}
+                style={{ borderRadius: '50px', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.35)', color: isDarkMode ? '#34d399' : '#059669', transition: 'all 0.3s ease' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(16,185,129,0.22)'; e.currentTarget.style.color = '#fff'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(16,185,129,0.1)'; e.currentTarget.style.color = isDarkMode ? '#34d399' : '#059669'; }}
               >
                 Log in
               </Link>
               <Button
                 className="d-flex align-items-center px-4 fw-bold"
                 onClick={handleOpenInquiry}
-                style={{ borderRadius: '50px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', transition: 'all 0.3s ease' }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.15)'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
+                style={{ borderRadius: '50px', background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', border: isDarkMode ? '1px solid rgba(255,255,255,0.2)' : '1px solid rgba(0,0,0,0.15)', color: isDarkMode ? '#fff' : '#0f172a', transition: 'all 0.3s ease' }}
+                onMouseEnter={e => { e.currentTarget.style.background = isDarkMode ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.1)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'; }}
               >
                 <i className="fas fa-question-circle me-2"></i> Inquiry
               </Button>
@@ -285,6 +329,7 @@ const App = () => {
       <section className="hero-section">
         <div className="hero-video-bg"></div>
         <div className="hero-overlay"></div>
+        <div className="sky-flying-plane">✈️</div>
 
         <div className="hero-content">
           <Row className="align-items-center g-5">
@@ -312,8 +357,47 @@ const App = () => {
             </Col>
 
             <Col lg={5} data-aos="fade-left" data-aos-delay="400">
+              {/* Airplane Flight Visual Showcase Card */}
+              <div className="airplane-card-showcase mb-3">
+                <img 
+                  src="/img/airplane_hero.jpg" 
+                  alt="Global Study Abroad Flight" 
+                  className="airplane-card-img"
+                />
+                <div className="airplane-card-overlay">
+                  <div className="d-flex justify-content-between align-items-center mb-2">
+                    <span className="flight-status-badge">
+                      <span className="flight-live-dot"></span>
+                      FLIGHT TO GLOBAL DREAMS
+                    </span>
+                    <span style={{ fontSize: '0.75rem', color: '#fbbf24', fontWeight: 700, background: 'rgba(245,158,11,0.15)', padding: '4px 10px', borderRadius: 50, border: '1px solid rgba(245,158,11,0.3)' }}>
+                      98.4% Visa Success
+                    </span>
+                  </div>
+
+                  {/* Interactive Flight Route Display */}
+                  <div className="flight-route-display">
+                    <div className="route-city">
+                      <span className="route-city-code">DEL</span>
+                      <span className="route-city-name">Home Country</span>
+                    </div>
+
+                    <div className="route-flight-track">
+                      <div className="flight-track-line"></div>
+                      <span className="flight-plane-icon">✈️</span>
+                    </div>
+
+                    <div className="route-city text-end">
+                      <span className="route-city-code" style={{ color: '#34d399' }}>GLOBAL</span>
+                      <span className="route-city-name">Top Universities</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Hero Stats Grid */}
               <div className="hero-stats-grid">
-                <div className="stat-card-large">
+                <div className="stat-card-small">
                   <span className="stat-value">14,750+</span>
                   <span className="stat-label">Visas processed</span>
                 </div>
@@ -326,10 +410,6 @@ const App = () => {
                   <span className="stat-label">Countries served</span>
                 </div>
                 <div className="stat-card-small">
-                  <span className="stat-value">14+</span>
-                  <span className="stat-label">Years experience</span>
-                </div>
-                <div className="stat-card-small">
                   <span className="stat-value">500+</span>
                   <span className="stat-label">Partner universities</span>
                 </div>
@@ -339,10 +419,11 @@ const App = () => {
         </div>
       </section>
 
+
       {/* Our Services Section */}
       <section className="py-5" id="services" style={{ maxWidth: 1320, margin: '0 auto', padding: '80px 24px 20px' }}>
         <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', fontWeight: 800, color: '#fff', textAlign: 'center', marginBottom: 8 }}>
-          Our Core <span style={{ background: 'linear-gradient(90deg,#38bdf8,#6366f1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Services</span>
+          Our Core <span style={{ background: 'linear-gradient(90deg, #34d399, #10b981, #fbbf24)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Services</span>
         </h2>
         <p style={{ textAlign: 'center', color: '#94a3b8', fontSize: '1.05rem', marginBottom: 48 }}>Comprehensive support for your international education journey</p>
         <Row className="g-4">
@@ -355,11 +436,11 @@ const App = () => {
             { icon: '🏠', title: 'Accommodation Help', desc: 'Finding safe and affordable housing options near your chosen university.' },
           ].map((service, index) => (
             <Col key={index} lg={4} md={6}>
-              <div style={{ background: 'linear-gradient(160deg, #1e293b 0%, #0f172a 100%)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 20, padding: 30, height: '100%', transition: 'all 0.3s ease', cursor: 'default' }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.borderColor = 'rgba(56,189,248,0.3)'; e.currentTarget.style.boxShadow = '0 10px 30px rgba(56,189,248,0.1)'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)'; e.currentTarget.style.boxShadow = 'none'; }}
+              <div style={{ background: 'linear-gradient(160deg, #101813 0%, #080d0a 100%)', border: '1px solid rgba(16,185,129,0.15)', borderRadius: 20, padding: 30, height: '100%', transition: 'all 0.3s ease', cursor: 'default' }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.borderColor = 'rgba(16,185,129,0.5)'; e.currentTarget.style.boxShadow = '0 10px 30px rgba(16,185,129,0.15)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'rgba(16,185,129,0.15)'; e.currentTarget.style.boxShadow = 'none'; }}
               >
-                <div style={{ width: 60, height: 60, borderRadius: 16, background: 'rgba(56,189,248,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.8rem', marginBottom: 20 }}>
+                <div style={{ width: 60, height: 60, borderRadius: 16, background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.8rem', marginBottom: 20 }}>
                   {service.icon}
                 </div>
                 <h4 style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700, color: '#fff', fontSize: '1.25rem', marginBottom: 12 }}>{service.title}</h4>
@@ -435,28 +516,28 @@ const App = () => {
       {/* Top-rated Courses */}
       <section className="py-5" id="courses" style={{ maxWidth: 1320, margin: '0 auto', padding: '60px 24px 80px' }}>
         <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', fontWeight: 800, color: '#fff', textAlign: 'center', marginBottom: 8 }}>
-          Top-rated <span style={{ background: 'linear-gradient(90deg,#38bdf8,#6366f1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Courses</span>
+          Top-rated <span style={{ background: 'linear-gradient(90deg, #34d399, #10b981, #fbbf24)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Courses</span>
         </h2>
         <p style={{ textAlign: 'center', color: '#94a3b8', fontSize: '1.05rem', marginBottom: 48 }}>Discover industry-leading programs designed for global careers</p>
         <Row className="g-4">
           {topCourses.map((course, index) => (
             <Col key={index} lg={4} md={6} className="mb-2">
-              <div style={{ position: 'relative', borderRadius: 20, padding: 1, background: 'linear-gradient(135deg, rgba(56,189,248,0.25), rgba(99,102,241,0.15), rgba(56,189,248,0.08))', transition: 'all 0.4s cubic-bezier(.4,0,.2,1)', height: '100%' }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(56,189,248,0.6), rgba(99,102,241,0.4), rgba(56,189,248,0.25))'; e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.boxShadow = '0 20px 50px rgba(56,189,248,0.15)'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(56,189,248,0.25), rgba(99,102,241,0.15), rgba(56,189,248,0.08))'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
+              <div style={{ position: 'relative', borderRadius: 20, padding: 1, background: 'linear-gradient(135deg, rgba(16,185,129,0.25), rgba(245,158,11,0.12), rgba(16,185,129,0.05))', transition: 'all 0.4s cubic-bezier(.4,0,.2,1)', height: '100%' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(52,211,153,0.7), rgba(16,185,129,0.5), rgba(245,158,11,0.3))'; e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.boxShadow = '0 20px 50px rgba(0,0,0,0.65), 0 0 25px rgba(16,185,129,0.18)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(16,185,129,0.25), rgba(245,158,11,0.12), rgba(16,185,129,0.05))'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
               >
-                <div style={{ background: 'linear-gradient(160deg, #1e293b 0%, #0f172a 100%)', borderRadius: 19, overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%' }}>
+                <div style={{ background: 'linear-gradient(160deg, #101813 0%, #080d0a 100%)', borderRadius: 19, overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%' }}>
                   {/* Image Section */}
                   <div style={{ position: 'relative', overflow: 'hidden' }}>
                     <img src={course.img} alt={course.title} style={{ width: '100%', height: 200, objectFit: 'cover', display: 'block', transition: 'transform 0.5s ease' }}
                       onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
                       onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                     />
-                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 60, background: 'linear-gradient(transparent, #0f172a)' }} />
+                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 60, background: 'linear-gradient(transparent, #080d0a)' }} />
                     {/* Price Tag */}
-                    <span style={{ position: 'absolute', top: 14, right: 14, background: 'linear-gradient(135deg, #38bdf8, #6366f1)', color: '#fff', padding: '5px 14px', borderRadius: 50, fontWeight: 700, fontSize: '0.85rem', boxShadow: '0 4px 12px rgba(56,189,248,0.3)' }}>{course.price}</span>
+                    <span style={{ position: 'absolute', top: 14, right: 14, background: 'linear-gradient(135deg, #10b981, #059669)', color: '#ffffff', padding: '5px 14px', borderRadius: 50, fontWeight: 800, fontSize: '0.85rem', boxShadow: '0 4px 12px rgba(16,185,129,0.35)' }}>{course.price}</span>
                     {/* Rating */}
-                    <span style={{ position: 'absolute', top: 14, left: 14, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', color: '#fbbf24', padding: '5px 12px', borderRadius: 50, fontWeight: 700, fontSize: '0.8rem', border: '1px solid rgba(255,255,255,0.1)' }}>
+                    <span style={{ position: 'absolute', top: 14, left: 14, background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)', color: '#fbbf24', padding: '5px 12px', borderRadius: 50, fontWeight: 700, fontSize: '0.8rem', border: '1px solid rgba(245,158,11,0.25)' }}>
                       ⭐ {course.rating}
                     </span>
                   </div>
@@ -464,23 +545,23 @@ const App = () => {
                   {/* Content */}
                   <div style={{ padding: '20px 22px 24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
                     {/* Category chip */}
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(56,189,248,0.1)', border: '1px solid rgba(56,189,248,0.2)', borderRadius: 50, padding: '4px 12px', fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#38bdf8', marginBottom: 12, alignSelf: 'flex-start' }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.25)', borderRadius: 50, padding: '4px 12px', fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#34d399', marginBottom: 12, alignSelf: 'flex-start' }}>
                       🎓 {course.category}
                     </span>
 
                     {/* University */}
                     <h5 style={{ fontFamily: "'Outfit', sans-serif", fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: 4, lineHeight: 1.3 }}>{course.university}</h5>
                     {/* Course Title */}
-                    <p style={{ fontSize: '0.9rem', color: '#7dd3fc', fontWeight: 600, marginBottom: 12 }}>{course.title}</p>
+                    <p style={{ fontSize: '0.9rem', color: '#6ee7b7', fontWeight: 600, marginBottom: 12 }}>{course.title}</p>
 
                     {/* Stats Row */}
                     <div style={{ display: 'flex', gap: 16, marginBottom: 12, fontSize: '0.82rem', color: '#94a3b8' }}>
                       <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <span style={{ width: 24, height: 24, borderRadius: 6, background: 'rgba(56,189,248,0.08)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem' }}>👨‍🎓</span>
+                        <span style={{ width: 24, height: 24, borderRadius: 6, background: 'rgba(16,185,129,0.1)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem' }}>👨‍🎓</span>
                         156 Students
                       </span>
                       <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <span style={{ width: 24, height: 24, borderRadius: 6, background: 'rgba(56,189,248,0.08)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem' }}>📚</span>
+                        <span style={{ width: 24, height: 24, borderRadius: 6, background: 'rgba(16,185,129,0.1)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem' }}>📚</span>
                         18 Lessons
                       </span>
                     </div>
@@ -491,11 +572,11 @@ const App = () => {
                     {/* Progress */}
                     <div style={{ marginBottom: 18 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                        <span style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#38bdf8' }}>Success Rate</span>
+                        <span style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#34d399' }}>Success Rate</span>
                         <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#fff' }}>75%</span>
                       </div>
                       <div style={{ background: 'rgba(255,255,255,0.08)', height: 6, borderRadius: 10, overflow: 'hidden' }}>
-                        <div style={{ width: '75%', height: '100%', borderRadius: 10, background: 'linear-gradient(90deg, #38bdf8, #6366f1)', transition: 'width 1s ease' }} />
+                        <div style={{ width: '75%', height: '100%', borderRadius: 10, background: 'linear-gradient(90deg, #10b981, #fbbf24)', transition: 'width 1s ease' }} />
                       </div>
                     </div>
 
@@ -503,9 +584,9 @@ const App = () => {
                     <div style={{ flex: 1 }} />
 
                     {/* Apply Button */}
-                    <Link to="/login" style={{ display: 'block', width: '100%', padding: '12px 0', borderRadius: 12, border: 'none', fontWeight: 700, fontSize: '0.95rem', textAlign: 'center', background: 'linear-gradient(135deg, #38bdf8, #6366f1)', color: '#fff', textDecoration: 'none', boxShadow: '0 4px 15px rgba(56,189,248,0.25)', transition: 'all 0.3s ease' }}
-                      onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 25px rgba(56,189,248,0.35)'; }}
-                      onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 15px rgba(56,189,248,0.25)'; }}
+                    <Link to="/login" style={{ display: 'block', width: '100%', padding: '12px 0', borderRadius: 12, border: 'none', fontWeight: 800, fontSize: '0.95rem', textAlign: 'center', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: '#ffffff', textDecoration: 'none', boxShadow: '0 4px 15px rgba(16,185,129,0.3)', transition: 'all 0.3s ease' }}
+                      onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.background = 'linear-gradient(135deg, #34d399 0%, #10b981 100%)'; e.currentTarget.style.boxShadow = '0 8px 25px rgba(16,185,129,0.5)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)'; e.currentTarget.style.boxShadow = '0 4px 15px rgba(16,185,129,0.3)'; }}
                     >
                       🚀 Apply Now
                     </Link>
@@ -593,33 +674,33 @@ const App = () => {
         </div>
       </section>
       {/* Footer */}
-      <footer id="contact" style={{ background: '#0a0f1e', borderTop: '1px solid rgba(255,255,255,0.06)', position: 'relative', overflow: 'hidden' }}>
+      <footer id="contact" style={{ background: '#050806', borderTop: '1px solid rgba(16,185,129,0.15)', position: 'relative', overflow: 'hidden' }}>
         {/* Top gradient line */}
-        <div style={{ height: 3, background: 'linear-gradient(90deg, transparent, #38bdf8, #6366f1, #38bdf8, transparent)' }} />
+        <div style={{ height: 3, background: 'linear-gradient(90deg, transparent, #34d399, #10b981, #fbbf24, transparent)' }} />
 
         {/* Decorative glow */}
-        <div style={{ position: 'absolute', top: -80, left: '50%', transform: 'translateX(-50%)', width: 400, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, rgba(56,189,248,0.06) 0%, transparent 70%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: -80, left: '50%', transform: 'translateX(-50%)', width: 400, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
         <Container style={{ padding: '60px 0 30px' }}>
           <Row className="g-5">
             {/* Brand Column */}
             <Col lg={4} md={6}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-                <img src="/img/logo.png" alt="Study First" height="40" />
+                <img src="/img/kiaan_logo.png" alt="Kiaan Technology" height="48" style={{ objectFit: 'contain' }} />
                 <div>
-                  <h5 style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700, color: '#fff', margin: 0, fontSize: '1.2rem' }}>Study First</h5>
-                  <span style={{ fontSize: '0.65rem', color: '#64748b', letterSpacing: '0.15em', textTransform: 'uppercase' }}>International Education</span>
+                  <h5 style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700, margin: 0, fontSize: '1.3rem' }}>Kiaan</h5>
+                  <span style={{ fontSize: '0.65rem', color: isDarkMode ? '#34d399' : '#059669', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 700 }}>Technology</span>
                 </div>
               </div>
-              <p style={{ color: '#64748b', fontSize: '0.9rem', lineHeight: 1.7, maxWidth: 300, marginBottom: 24 }}>
+              <p style={{ color: '#94a3b8', fontSize: '0.9rem', lineHeight: 1.7, maxWidth: 300, marginBottom: 24 }}>
                 Your trusted partner for international university admissions, visa guidance, and global career pathways.
               </p>
               {/* Social Icons */}
               <div style={{ display: 'flex', gap: 10 }}>
                 {['facebook', 'instagram', 'linkedin', 'youtube'].map((social) => (
-                  <a key={social} href="#" style={{ width: 38, height: 38, borderRadius: 10, background: 'rgba(56,189,248,0.08)', border: '1px solid rgba(56,189,248,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#38bdf8', fontSize: '0.9rem', transition: 'all 0.3s ease', textDecoration: 'none' }}
-                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(56,189,248,0.2)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = 'rgba(56,189,248,0.08)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                  <a key={social} href="#" style={{ width: 38, height: 38, borderRadius: 10, background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#34d399', fontSize: '0.9rem', transition: 'all 0.3s ease', textDecoration: 'none' }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(16,185,129,0.25)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'rgba(16,185,129,0.1)'; e.currentTarget.style.transform = 'translateY(0)'; }}
                   >
                     <i className={`fab fa-${social}`}></i>
                   </a>
@@ -629,10 +710,10 @@ const App = () => {
 
             {/* Quick Links */}
             <Col lg={2} md={6}>
-              <h6 style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700, color: '#38bdf8', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 20 }}>Quick Links</h6>
+              <h6 style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700, color: '#34d399', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 20 }}>Quick Links</h6>
               {['About Us', 'Courses', 'Universities', 'Apply Now', 'Blog'].map((link) => (
                 <a key={link} href="#" style={{ display: 'block', color: '#94a3b8', fontSize: '0.88rem', marginBottom: 12, textDecoration: 'none', transition: 'color 0.2s' }}
-                  onMouseEnter={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.paddingLeft = '4px'; }}
+                  onMouseEnter={e => { e.currentTarget.style.color = '#34d399'; e.currentTarget.style.paddingLeft = '4px'; }}
                   onMouseLeave={e => { e.currentTarget.style.color = '#94a3b8'; e.currentTarget.style.paddingLeft = '0'; }}
                 >{link}</a>
               ))}
@@ -640,7 +721,7 @@ const App = () => {
 
             {/* Services */}
             <Col lg={3} md={6}>
-              <h6 style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700, color: '#38bdf8', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 20 }}>Services</h6>
+              <h6 style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700, color: '#34d399', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 20 }}>Services</h6>
               {['University Admissions', 'Visa Assistance', 'Career Counseling', 'Scholarship Guidance', 'Pre-Departure Support'].map((service) => (
                 <a key={service} href="#" style={{ display: 'block', color: '#94a3b8', fontSize: '0.88rem', marginBottom: 12, textDecoration: 'none', transition: 'color 0.2s' }}
                   onMouseEnter={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.paddingLeft = '4px'; }}
@@ -693,17 +774,43 @@ const App = () => {
         show={showInquiryModal}
         onHide={handleCloseInquiry}
         size="xl"
-        backdrop="static"
+        centered
+        className="inquiry-custom-modal"
       >
-        <Modal.Header closeButton>
-          <Modal.Title>Inquiry</Modal.Title>
+        <Modal.Header>
+          <Modal.Title>
+            <span>📝</span>
+            <span>Student Inquiry Form</span>
+          </Modal.Title>
+          <button
+            type="button"
+            className="modal-close-cross-btn"
+            onClick={handleCloseInquiry}
+            title="Close Form (Esc)"
+            aria-label="Close"
+          >
+            ✕
+          </button>
         </Modal.Header>
-        <Modal.Body>
-          <InquiryForm />
+        <Modal.Body style={{ position: 'relative' }}>
+          {/* Secondary Sticky floating close pill for quick dismissal while scrolling */}
+          <button
+            type="button"
+            className="modal-sticky-close-badge mb-3"
+            onClick={handleCloseInquiry}
+            title="Close Form"
+          >
+            ✕ Close Form
+          </button>
+          <InquiryForm onClose={handleCloseInquiry} />
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseInquiry}>
-            Close
+          <Button
+            variant="danger"
+            onClick={handleCloseInquiry}
+            style={{ borderRadius: '50px', padding: '7px 24px', fontWeight: 700 }}
+          >
+            ✕ Close Form
           </Button>
         </Modal.Footer>
       </Modal>
