@@ -1928,19 +1928,29 @@ const LeadTable = ({ show, handleClose }) => {
   const counsolerId = localStorage.getItem("counselor_id");
   const fetchConvertedLeads = async () => {
     try {
+      if (!counsolerId) {
+        setConvertData([]);
+        setFilteredData([]);
+        return;
+      }
       const response = await api.get(
         `${BASE_URL}leads/by-counselor/${counsolerId}`
       );
+      const rawData = Array.isArray(response.data) ? response.data : [];
       // Ensure every lead has a priority (default to 'Low' when missing)
-      const normalized = (response.data || []).map((item) => ({
+      const normalized = rawData.map((item) => ({
         ...item,
         priority: item.priority || "Low",
       }));
       setConvertData(normalized);
       setFilteredData(normalized);
     } catch (error) {
-      console.error("Error fetching converted leads:", error);
-      alert("Failed to fetch leads");
+      if (error?.response?.status === 404) {
+        setConvertData([]);
+        setFilteredData([]);
+      } else {
+        console.error("Error fetching converted leads:", error);
+      }
     }
   };
 
@@ -2446,7 +2456,7 @@ const extractCountryCode = (phone) => {
       role: "student",
       password: "",
       email: lead.email || "",
-      counselor_id: lead.counselor_id || null,
+      counselor_id: lead.counselor_id || counsolerId || null,
       processor_id: lead.processor_id || null,
       inquiry_id: lead.id || null,
     });
@@ -2902,7 +2912,13 @@ const extractCountryCode = (phone) => {
             <Modal.Title>Add Lead</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <CounselorAddLead />
+            <CounselorAddLead
+              onClose={() => setShowModal(false)}
+              onSuccess={() => {
+                setShowModal(false);
+                fetchConvertedLeads();
+              }}
+            />
           </Modal.Body>
         </Modal>
 

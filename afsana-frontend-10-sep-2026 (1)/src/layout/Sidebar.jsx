@@ -23,7 +23,8 @@ const Sidebar = ({ login, collapsed, toggleSidebar, menuItemClick }) => {
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
- const userPermissions = JSON.parse(localStorage.getItem("userpermissions")) || [];
+  const userPermissions = JSON.parse(localStorage.getItem("userpermissions")) || [];
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -225,19 +226,6 @@ const Sidebar = ({ login, collapsed, toggleSidebar, menuItemClick }) => {
         path: "/councelorTask",
         icon: <Globe size={18} className="mr-2" />
       },
-      // {
-      //   name: "Add Staff", path: "/addStaff",
-      //   icon: <GraduationCap size={20} className="mr-2" />,
-      // },
-      // { name: "Add Processor", path: "/addProcessor" ,
-      //    icon: <GraduationCap size={20} className="mr-2" />,
-      //  },
-      // { name: "Add Processor", path: "/addProcessor" }
-      // {
-      //   name: "Application Tracking",
-      //   path: "/applicationtracking",
-      //   icon: <GraduationCap size={18} className="mr-2" />
-      // },
       {
         name: "Payments & Invoices",
         path: "/studentinvoice",
@@ -260,22 +248,21 @@ const Sidebar = ({ login, collapsed, toggleSidebar, menuItemClick }) => {
         path: "/staffDashboard",
         icon: <LayoutDashboard size={18} className="mr-2" />
       },
- userPermissions.find(p => p.permission_name === "Inquiry")?.view_permission === 1 && {
-    name: "Inquiry",
-    path: "/staffInquiry",
-    icon: <FileText size={18} className="mr-2" />
-  },
-  userPermissions.find(p => p.permission_name === "Lead")?.view_permission === 1 && {
-    name: "Lead",
-    path: "/stafflead",
-    icon: <FileText size={18} className="mr-2" />
-  },
-  userPermissions.find(p => p.permission_name === "Payments & Invoices")?.view_permission === 1 && {
-    name: "Payments & Invoices",
-    path: "/ReportingAnalytics",
-    icon: <CreditCard size={18} className="mr-2" />
-  },
-     
+      userPermissions.find(p => p.permission_name === "Inquiry")?.view_permission === 1 && {
+        name: "Inquiry",
+        path: "/staffInquiry",
+        icon: <FileText size={18} className="mr-2" />
+      },
+      userPermissions.find(p => p.permission_name === "Lead")?.view_permission === 1 && {
+        name: "Lead",
+        path: "/stafflead",
+        icon: <FileText size={18} className="mr-2" />
+      },
+      userPermissions.find(p => p.permission_name === "Payments & Invoices")?.view_permission === 1 && {
+        name: "Payments & Invoices",
+        path: "/ReportingAnalytics",
+        icon: <CreditCard size={18} className="mr-2" />
+      },
     ],
     processors: [
       {
@@ -339,7 +326,7 @@ const Sidebar = ({ login, collapsed, toggleSidebar, menuItemClick }) => {
   };
 
   const renderMenuItems = () => {
-    const items = menuItems[login] || [];
+    const items = (menuItems[login] || []).filter(Boolean);
     return items.map((item, index) => (
       <li
         key={index}
@@ -390,7 +377,7 @@ const Sidebar = ({ login, collapsed, toggleSidebar, menuItemClick }) => {
     `}>
       <div className="sidebar-toggle-wrapper" style={{ display: "flex", justifyContent: collapsed ? "center" : "flex-end", padding: "10px 14px 4px" }}>
         <button
-          className="btn btn-sm btn-light border"
+          className="btn btn-sm sidebar-collapse-btn"
           style={{ width: "32px", height: "32px", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "8px", cursor: "pointer" }}
           onClick={toggleSidebar}
           title={collapsed ? "Expand Menu" : "Collapse Menu"}

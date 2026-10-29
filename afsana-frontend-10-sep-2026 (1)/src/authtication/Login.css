@@ -13,10 +13,10 @@
   padding: 2rem 1.5rem;
   background-color: #060a08;
   background-image: 
-    radial-gradient(circle at 15% 20%, rgba(16, 185, 129, 0.15) 0%, transparent 45%),
-    radial-gradient(circle at 85% 80%, rgba(245, 158, 11, 0.10) 0%, transparent 50%),
-    linear-gradient(to bottom, rgba(6, 10, 8, 0.82) 0%, rgba(6, 10, 8, 0.94) 100%),
-    url('/img/study_abroad_bg.jpg');
+    radial-gradient(circle at 15% 20%, rgba(16, 185, 129, 0.16) 0%, transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(245, 158, 11, 0.12) 0%, transparent 50%),
+    linear-gradient(to bottom, rgba(6, 10, 8, 0.78) 0%, rgba(6, 10, 8, 0.90) 100%),
+    url('/img/landing_hero_campus.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -207,6 +207,13 @@
   position: relative;
   z-index: 2;
   background: rgba(13, 20, 16, 0.95);
+}
+
+.login-theme-toggle-wrap {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.75rem;
+  z-index: 5;
 }
 
 .login-brand-header {
@@ -474,14 +481,37 @@
 }
 
 /* Responsive Breakpoints */
+@media (min-width: 1441px) {
+  .login-card-container {
+    max-width: 1080px;
+    min-height: 640px;
+  }
+
+  .login-form-panel {
+    padding: 3.5rem 3.25rem;
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1366px) {
+  .login-card-container {
+    max-width: 920px;
+    min-height: 540px;
+  }
+
+  .login-form-panel {
+    padding: 2.25rem 2.25rem;
+  }
+}
+
 @media (max-width: 900px) {
   .login-card-container {
     flex-direction: column;
-    max-width: 520px;
+    max-width: 540px;
+    width: 100%;
   }
   
   .login-showcase-panel {
-    min-height: 280px;
+    min-height: 250px;
     padding: 1.75rem;
   }
 
@@ -496,18 +526,182 @@
 
 @media (max-width: 480px) {
   .login-page-wrapper {
-    padding: 1rem;
+    padding: 0.75rem;
   }
   
   .login-card-container {
-    border-radius: 20px;
+    border-radius: 18px;
+  }
+
+  .login-showcase-panel {
+    min-height: 210px;
+    padding: 1.25rem;
   }
   
   .login-form-panel {
-    padding: 1.75rem 1.25rem;
+    padding: 1.5rem 1.15rem;
   }
   
   .login-title {
-    font-size: 1.5rem;
+    font-size: 1.45rem;
   }
+
+  .login-location-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* =========================================================
+   LIGHT THEME OVERRIDES FOR LOGIN PAGE
+   ========================================================= */
+
+body.light-theme .login-page-wrapper {
+  background-color: #f0f4f8;
+  background-image:
+    linear-gradient(to bottom, rgba(248, 250, 252, 0.38) 0%, rgba(240, 253, 244, 0.45) 100%),
+    url('/img/landing_hero_campus.jpg');
+  color: #1e293b;
+}
+
+body.light-theme .login-page-wrapper::before {
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, transparent 70%);
+}
+
+body.light-theme .login-card-container {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.1),
+    0 0 40px rgba(16, 185, 129, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+body.light-theme .login-showcase-panel {
+  background: #f8faf9;
+}
+
+body.light-theme .login-showcase-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.3) 0%,
+    rgba(255, 255, 255, 0.1) 35%,
+    rgba(0, 0, 0, 0.45) 70%,
+    rgba(0, 0, 0, 0.75) 100%
+  );
+}
+
+body.light-theme .login-badge-pill {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #059669;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .login-stat-chip {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #334155;
+}
+
+body.light-theme .login-form-panel {
+  background: rgba(255, 255, 255, 0.98);
+}
+
+body.light-theme .login-title {
+  color: #1e293b;
+}
+
+body.light-theme .login-title-accent {
+  background: linear-gradient(90deg, #059669, #d97706);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+body.light-theme .login-subtitle {
+  color: #64748b;
+}
+
+body.light-theme .login-location-banner.granted {
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: #059669;
+}
+
+body.light-theme .login-location-banner.pending {
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  color: #b45309;
+}
+
+body.light-theme .login-input-field {
+  background: rgba(241, 245, 249, 0.9);
+  border: 1px solid #d1d5db;
+  color: #1e293b;
+}
+
+body.light-theme .login-input-field::placeholder {
+  color: #94a3b8;
+}
+
+body.light-theme .login-input-field:focus {
+  background: #ffffff;
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15), 0 0 16px rgba(16, 185, 129, 0.1);
+}
+
+body.light-theme .login-input-icon {
+  color: #10b981;
+}
+
+body.light-theme .login-password-toggle {
+  color: #94a3b8;
+}
+
+body.light-theme .login-password-toggle:hover {
+  color: #059669;
+}
+
+body.light-theme .login-submit-btn {
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.25);
+}
+
+body.light-theme .login-google-btn {
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid #d1d5db;
+  color: #334155;
+}
+
+body.light-theme .login-google-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  border-color: #94a3b8;
+}
+
+body.light-theme .login-divider {
+  color: #94a3b8;
+}
+
+body.light-theme .login-divider::before,
+body.light-theme .login-divider::after {
+  background: #e2e8f0;
+}
+
+body.light-theme .login-forgot-link {
+  color: #d97706;
+}
+
+body.light-theme .login-forgot-link:hover {
+  color: #b45309;
+}
+
+body.light-theme .login-back-home-btn {
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: #475569;
+}
+
+body.light-theme .login-back-home-btn:hover {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: #10b981;
+  color: #059669;
 }

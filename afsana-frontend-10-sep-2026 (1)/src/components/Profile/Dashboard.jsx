@@ -35,26 +35,20 @@ const Dashboard = () => {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
-        // Fetch dashboard counts
         const statsRes = await axios.get(`${BASE_URL}studentsdashboard/${stuId}`);
         setData(statsRes?.data?.data || { totaltasks: 0, totalpayments: 0, totalvisa_process: 0 });
 
-        // Fetch student details
         const studentRes = await api.get(`${BASE_URL}auth/getStudentById/${stuId}`);
         setStudentInfo(studentRes.data);
 
-        // Fetch assigned counselor
         const counselorRes = await api.get(`${BASE_URL}auth/getAssignedCounselor/${stuId}`);
         setAssignedCounselor(counselorRes.data?.[0]);
 
-        // Fetch recent updates
         const updatesRes = await axios.get(`${BASE_URL}recent-updates/${stuId}`);
         setRecentUpdates(updatesRes?.data?.data || []);
 
-        // Fetch latest visa process for university details
         const visaRes = await api.get(`${BASE_URL}auth/getVisaProcessBystudentidsss/${stuId}`);
         if (visaRes.data?.success && visaRes.data?.data?.length > 0) {
-          // Get the latest one (first in array as they are sorted by DESC)
           setLatestVisaProcess(visaRes.data.data[0]);
         }
 
@@ -94,7 +88,7 @@ const Dashboard = () => {
               <Card className="dashboard-card pending-tasks-card">
                 <Card.Body>
                   <div className="d-flex justify-content-between align-items-center mb-3">
-                    <div className="p-2 rounded bg-primary bg-opacity-10 text-primary">
+                    <div className="p-2 rounded bg-success bg-opacity-10 text-success">
                       <FaTasks size={20} />
                     </div>
                   </div>
@@ -147,11 +141,11 @@ const Dashboard = () => {
                 <Card.Body>
                   <div className="d-flex justify-content-between align-items-center mb-3">
                     <h5 className="mb-0 fw-bold">Selected University</h5>
-                    <Link to="/Searchprograms" className="small text-decoration-none">Change University</Link>
+                    <Link to="/Searchprograms" className="small text-decoration-none" style={{ color: "#10b981", fontWeight: 600 }}>Change University</Link>
                   </div>
                   <div className="d-flex align-items-center mt-4">
-                    <div className="p-3 bg-light rounded me-3">
-                      <FaUniversity size={30} className="text-primary" />
+                    <div className="p-3 rounded me-3" style={{ background: "rgba(16, 185, 129, 0.12)" }}>
+                      <FaUniversity size={30} style={{ color: "#10b981" }} />
                     </div>
                     <div>
                       <h6 className="mb-1 fw-bold">{latestVisaProcess?.university_name || studentInfo?.university_name || "No University Selected"}</h6>
@@ -185,7 +179,7 @@ const Dashboard = () => {
                       <img 
                         src={studentInfo.photo.startsWith('http') ? studentInfo.photo : `${BASE_URL.replace('/api/', '')}${studentInfo.photo}`} 
                         alt="Profile" 
-                        className="rounded-circle shadow-sm border border-2 border-primary"
+                        className="rounded-circle shadow-sm border border-2 border-success"
                         style={{ width: "45px", height: "45px", objectFit: "cover" }}
                       />
                     )}
@@ -214,7 +208,7 @@ const Dashboard = () => {
           </Row>
         </Col>
 
-// Right Column - Sidebar
+        {/* Right Column - Sidebar */}
         <Col lg={4}>
           {/* Student AI Assistant */}
           <div className="mb-4">
@@ -222,14 +216,30 @@ const Dashboard = () => {
           </div>
 
           {/* Next Step Card */}
-          <Card className="mb-4 border-0" style={{ background: "linear-gradient(135deg, #fce38a 0%, #f38181 100%)", borderRadius: "15px" }}>
+          <Card
+            className="mb-4 border-0"
+            style={{
+              background: "linear-gradient(135deg, #0d1f17 0%, #143325 100%)",
+              border: "1px solid rgba(16, 185, 129, 0.35)",
+              borderRadius: "16px",
+              boxShadow: "0 12px 28px rgba(0, 0, 0, 0.25)",
+            }}
+          >
             <Card.Body className="text-white p-4">
-              <div className="d-flex align-items-center mb-2">
+              <div className="d-flex align-items-center mb-2" style={{ color: "#fbbf24" }}>
                 <FaClock className="me-2" />
                 <span className="small fw-bold text-uppercase">Next Step</span>
               </div>
-              <h5 className="fw-bold mb-3">Upload your Documents to move to the next stage.</h5>
-              <button className="btn btn-light w-100 fw-bold py-2 shadow-sm" onClick={() => navigate('/visaprocesing')}>
+              <h5 className="fw-bold mb-3" style={{ color: "#ffffff" }}>Upload your Documents to move to the next stage.</h5>
+              <button
+                className="btn w-100 fw-bold py-2 shadow-sm text-white"
+                style={{
+                  background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                  border: "none",
+                  borderRadius: "10px",
+                }}
+                onClick={() => navigate('/visaprocesing')}
+              >
                 <FaUpload className="me-2" /> Upload Now
               </button>
             </Card.Body>
@@ -239,13 +249,16 @@ const Dashboard = () => {
           <Card className="dashboard-card recent-updates-panel">
             <div className="d-flex justify-content-between align-items-center mb-4">
               <h5 className="mb-0 fw-bold">Recent Updates</h5>
-              <Link to="/visaprocesing" className="small text-decoration-none">View All</Link>
+              <Link to="/visaprocesing" className="small text-decoration-none" style={{ color: "#10b981", fontWeight: 600 }}>View All</Link>
             </div>
             <div className="updates-list">
               {recentUpdates.length > 0 ? (
                 recentUpdates.map((update, index) => (
                   <div key={index} className="update-item">
-                    <div className={`update-icon ${update.type === 'task' ? 'bg-primary' : 'bg-success'}`}>
+                    <div
+                      className="update-icon"
+                      style={{ background: update.type === 'task' ? "#10b981" : "#f59e0b" }}
+                    >
                       {update.type === 'task' ? <FaTasks size={14} /> : <FaCheckCircle size={14} />}
                     </div>
                     <div className="update-content">
@@ -259,7 +272,16 @@ const Dashboard = () => {
                 <div className="text-center text-muted py-4">No recent updates</div>
               )}
             </div>
-            <button className="btn btn-outline-primary w-100 mt-4 py-2" onClick={() => navigate('/visaprocesing')}>
+            <button
+              className="btn w-100 mt-4 py-2 fw-semibold"
+              style={{
+                border: "1px solid rgba(16, 185, 129, 0.4)",
+                color: "#10b981",
+                background: "rgba(16, 185, 129, 0.08)",
+                borderRadius: "10px",
+              }}
+              onClick={() => navigate('/visaprocesing')}
+            >
               View All Updates
             </button>
           </Card>

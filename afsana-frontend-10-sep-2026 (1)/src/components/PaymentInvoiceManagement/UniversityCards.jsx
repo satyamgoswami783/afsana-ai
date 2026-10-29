@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useSpring, animated, useTrail } from "react-spring";
 import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
@@ -6,6 +6,7 @@ import { Button } from "react-bootstrap";
 import Swal from "sweetalert2";
 import BASE_URL from "../../Config";
 import api from "../../interceptors/axiosInterceptor";
+import { ThemeContext } from "../../context/ThemeContext";
 
 /* ── Inline Styles ────────────────────────────────────────── */
 const styles = {
@@ -281,6 +282,7 @@ const styles = {
 };
 
 const UniversityCards = () => {
+  const { isDarkMode } = useContext(ThemeContext);
   const [universities, setUniversities] = useState([]);
   const [expandedCards, setExpandedCards] = useState({});
   const [hoveredCard, setHoveredCard] = useState(null);
@@ -339,12 +341,12 @@ const UniversityCards = () => {
   };
 
   return (
-    <div style={styles.section}>
+    <div className="university-cards-section" style={styles.section}>
       {/* ── Section Header ── */}
-      <h2 style={styles.heading}>
-        Top International <span style={{ background: "linear-gradient(90deg, #34d399, #10b981, #fbbf24)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Universities</span>
+      <h2 style={{ ...styles.heading, color: isDarkMode ? "#ffffff" : "#0f172a", textShadow: isDarkMode ? "0 2px 12px rgba(0,0,0,0.6)" : "0 2px 14px rgba(255,255,255,0.95)" }}>
+        Top International <span style={{ background: "linear-gradient(90deg, #10b981, #059669, #d97706)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Universities</span>
       </h2>
-      <p style={styles.subHeading}>Explore world-class universities and start your global education journey</p>
+      <p style={{ ...styles.subHeading, color: isDarkMode ? "#cbd5e1" : "#1e293b", fontWeight: 600, textShadow: isDarkMode ? "0 1px 8px rgba(0,0,0,0.6)" : "0 1px 10px rgba(255,255,255,0.95)" }}>Explore world-class universities and start your global education journey</p>
 
       {/* ── Cards Grid ── */}
       <div className="row g-4">
@@ -383,7 +385,17 @@ const UniversityCards = () => {
                   onMouseLeave={() => setHoveredCard(null)}
                 >
                   {/* Card Inner */}
-                  <div className="university-card-inner" style={styles.cardInner}>
+                  <div
+                    className="university-card-inner"
+                    style={{
+                      ...styles.cardInner,
+                      background: isDarkMode
+                        ? "linear-gradient(160deg, rgba(16, 24, 19, 0.92) 0%, rgba(8, 13, 10, 0.96) 100%)"
+                        : "rgba(255, 255, 255, 0.95)",
+                      backdropFilter: "blur(14px)",
+                      WebkitBackdropFilter: "blur(14px)",
+                    }}
+                  >
                     {/* Decorative glow */}
                     <div style={styles.glowCircle} />
 
@@ -396,6 +408,7 @@ const UniversityCards = () => {
                         <img
                           src={university.logo_url}
                           alt={`${university.name} Logo`}
+                          loading="lazy"
                           style={styles.logoImg}
                           crossOrigin="anonymous"
                           onError={(e) => {
@@ -403,46 +416,57 @@ const UniversityCards = () => {
                           }}
                         />
                       </div>
-                      <h5 className="university-name" style={styles.universityName}>{university.name}</h5>
+                      <h5 className="university-name" style={{ ...styles.universityName, color: isDarkMode ? "#ffffff" : "#0f172a" }}>{university.name}</h5>
                     </div>
 
                     {/* ── Location ── */}
                     <div>
-                      <span style={styles.locationChip}>
+                      <span style={{ ...styles.locationChip, color: isDarkMode ? "#6ee7b7" : "#059669" }}>
                         📍 {university.location}
                       </span>
                     </div>
 
                     {/* ── Programs ── */}
-                    <div style={styles.sectionLabel}>
+                    <div style={{ ...styles.sectionLabel, color: isDarkMode ? "#34d399" : "#059669" }}>
                       <span style={styles.sectionIcon}>🎓</span>
                       Popular Programs
                     </div>
                     <div style={styles.chipRow}>
                       {displayPrograms.length > 0 ? (
                         displayPrograms.map((program, idx) => (
-                          <span key={idx} className="university-program-chip" style={styles.chip}>{program}</span>
+                          <span
+                            key={idx}
+                            className="university-program-chip"
+                            style={{
+                              ...styles.chip,
+                              background: isDarkMode ? "rgba(255,255,255,0.04)" : "#f1f5f9",
+                              border: isDarkMode ? "1px solid rgba(255,255,255,0.08)" : "1px solid #e2e8f0",
+                              color: isDarkMode ? "#e2e8f0" : "#334155",
+                            }}
+                          >
+                            {program}
+                          </span>
                         ))
                       ) : (
-                        <span style={{ ...styles.chip, opacity: 0.5 }}>No programs available</span>
+                        <span style={{ ...styles.chip, opacity: 0.5, color: isDarkMode ? "#e2e8f0" : "#64748b" }}>No programs available</span>
                       )}
                     </div>
 
                     {/* ── Highlights ── */}
-                    <div style={styles.sectionLabel}>
+                    <div style={{ ...styles.sectionLabel, color: isDarkMode ? "#34d399" : "#059669" }}>
                       <span style={styles.sectionIcon}>✨</span>
                       Key Highlights
                     </div>
                     <div style={{ marginBottom: 12 }}>
                       {displayHighlights.length > 0 ? (
                         displayHighlights.map((highlight, idx) => (
-                          <div key={idx} className="university-highlight-item" style={styles.highlightItem}>
+                          <div key={idx} className="university-highlight-item" style={{ ...styles.highlightItem, color: isDarkMode ? "#94a3b8" : "#475569" }}>
                             <span style={styles.highlightDot} />
                             <span>{highlight}</span>
                           </div>
                         ))
                       ) : (
-                        <div style={{ ...styles.highlightItem, opacity: 0.5 }}>
+                        <div style={{ ...styles.highlightItem, opacity: 0.5, color: isDarkMode ? "#94a3b8" : "#64748b" }}>
                           <span style={styles.highlightDot} />
                           <span>No highlights available</span>
                         </div>
@@ -452,7 +476,7 @@ const UniversityCards = () => {
                     {/* ── Read More ── */}
                     {hasMore && (
                       <button
-                        style={styles.readMoreBtn}
+                        style={{ ...styles.readMoreBtn, color: isDarkMode ? "#34d399" : "#059669" }}
                         onClick={() => toggleExpand(index)}
                       >
                         {isExpanded ? "▲ Read Less" : "▼ Read More..."}
@@ -463,16 +487,16 @@ const UniversityCards = () => {
                     <hr style={styles.divider} />
 
                     {/* ── Contact ── */}
-                    <div style={styles.sectionLabel}>
+                    <div style={{ ...styles.sectionLabel, color: isDarkMode ? "#34d399" : "#059669" }}>
                       <span style={styles.sectionIcon}>📞</span>
                       Contact Info
                     </div>
                     <div style={styles.contactRow}>
-                      <div className="university-contact-item" style={styles.contactItem}>
+                      <div className="university-contact-item" style={{ ...styles.contactItem, color: isDarkMode ? "#94a3b8" : "#475569" }}>
                         <span style={styles.contactIcon}>📱</span>
                         <span>{university.contact_phone || "N/A"}</span>
                       </div>
-                      <div className="university-contact-item" style={styles.contactItem}>
+                      <div className="university-contact-item" style={{ ...styles.contactItem, color: isDarkMode ? "#94a3b8" : "#475569" }}>
                         <span style={styles.contactIcon}>✉️</span>
                         <span>{university.contact_email || "N/A"}</span>
                       </div>

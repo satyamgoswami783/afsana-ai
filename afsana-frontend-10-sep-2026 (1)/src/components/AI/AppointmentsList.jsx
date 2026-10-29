@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import config from "../../Config";
+import BASE_URL from "../../Config";
+import api from "../../interceptors/axiosInterceptor";
 import { format } from "date-fns";
 
 const AppointmentsList = () => {
@@ -17,16 +17,23 @@ const AppointmentsList = () => {
   const fetchAppointments = async () => {
     try {
       const params = {};
-      if (role === 'counselor' && counselor_id) {
+      if (role === "counselor" && counselor_id) {
         params.counselor_id = counselor_id;
-      } else if (loginDetail?.id && role !== 'admin') {
+      } else if (loginDetail?.id && role !== "admin") {
         params.counselor_id = loginDetail.id;
       }
-      const response = await axios.get(`${config.apiUrl}/ai-dashboards/appointments`, { params });
-      setAppointments(response.data);
-      setLoading(false);
+      const response = await api.get(`${BASE_URL}ai-dashboards/appointments`, { params });
+      if (Array.isArray(response.data)) {
+        setAppointments(response.data);
+      } else if (response.data && Array.isArray(response.data.data)) {
+        setAppointments(response.data.data);
+      } else {
+        setAppointments([]);
+      }
     } catch (error) {
       console.error("Error fetching appointments:", error);
+      setAppointments([]);
+    } finally {
       setLoading(false);
     }
   };
@@ -42,28 +49,36 @@ const AppointmentsList = () => {
 
       {loading ? (
         <div className="text-center py-5">
-          <div className="spinner-border text-primary" role="status">
+          <div className="spinner-border text-success" role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
       ) : (
         <div className="row">
-          {appointments.length > 0 ? (
+          {Array.isArray(appointments) && appointments.length > 0 ? (
             appointments.map((appt) => (
               <div className="col-md-4 mb-4" key={appt.id}>
-                <div className="card shadow-sm border-0 h-100">
+                <div className="card shadow-sm border-0 h-100" style={{ borderRadius: "16px" }}>
                   <div className="card-body">
                     <div className="d-flex justify-content-between align-items-center mb-3">
                       <span className="badge bg-primary px-3 py-2 rounded-pill">
                         {appt.inquiry_type || "Office Visit"}
                       </span>
                       <small className="text-muted fw-bold">
-                        {appt.office_visit_date ? format(new Date(appt.office_visit_date), "MMM dd, yyyy - hh:mm a") : "TBD"}
+                        {appt.office_visit_date
+                          ? format(new Date(appt.office_visit_date), "MMM dd, yyyy - hh:mm a")
+                          : "TBD"}
                       </small>
                     </div>
                     <h5 className="fw-bold mb-1">{appt.full_name}</h5>
-                    <p className="text-muted mb-3"><i className="bi bi-telephone-fill me-2"></i>{appt.phone_number}</p>
-                    <p className="mb-0 text-dark"><i className="bi bi-geo-alt-fill me-2 text-danger"></i>{appt.country || "Not specified"}</p>
+                    <p className="text-muted mb-3">
+                      <i className="bi bi-telephone-fill me-2"></i>
+                      {appt.phone_number}
+                    </p>
+                    <p className="mb-0 text-dark">
+                      <i className="bi bi-geo-alt-fill me-2 text-danger"></i>
+                      {appt.country || "Not specified"}
+                    </p>
                   </div>
                   <div className="card-footer bg-white border-0 text-end">
                     <button className="btn btn-outline-primary btn-sm">View Details</button>

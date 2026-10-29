@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto'; // Automatically registers required chart.js components
 import './AI.css';
 import api from '../../interceptors/axiosInterceptor';
 import BASE_URL from '../../Config';
+import { ThemeContext } from '../../context/ThemeContext';
 
 const ManagerAISummary = () => {
+  const { isDarkMode } = useContext(ThemeContext);
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
 
@@ -29,7 +31,7 @@ const ManagerAISummary = () => {
                 {
                   label: 'AI Requests (Daily)',
                   data: chartDataValues,
-                  backgroundColor: ['#6366f1', '#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#06b6d4', '#ec4899'],
+                  backgroundColor: ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#06b6d4', '#ec4899', '#6366f1'],
                   borderRadius: 8,
                   maxBarThickness: 44,
                   barPercentage: 0.5,
@@ -57,7 +59,7 @@ const ManagerAISummary = () => {
       {/* AI Lead Insights */}
       <div className="col-xl-4 col-lg-4 col-md-12 col-12">
         <div className="ai-glass-card h-100 d-flex flex-column">
-          <div className="card-header bg-transparent border-bottom border-light-subtle py-2 px-3 px-md-4 d-flex align-items-center justify-content-between">
+          <div className="card-header bg-transparent border-bottom border-light-subtle py-2 px-3 px-md-4 d-flex align-items-center justify-content-between ai-card-header">
             <h6 className="mb-0 fw-bold ai-gradient-text d-flex align-items-center gap-2" style={{ fontSize: '0.88rem' }}>
               <i className="fa-solid fa-lightbulb text-warning ai-pulse-icon"></i>
               AI Lead Insights
@@ -67,7 +69,7 @@ const ManagerAISummary = () => {
           <div className="card-body p-3 px-md-4 d-flex flex-column justify-content-center gap-3">
             <div className="lead-quality-item">
               <div className="d-flex justify-content-between align-items-center mb-1">
-                <span className="text-secondary fw-semibold" style={{ fontSize: '0.82rem' }}>High Quality (Score &gt; 80)</span>
+                <span className="ai-quality-label fw-semibold" style={{ fontSize: '0.82rem' }}>High Quality (Score &gt; 80)</span>
                 <span className="badge bg-success rounded-pill px-2.5 py-0.5 fw-bold text-white" style={{ fontSize: '0.75rem' }}>{data.leadQuality.high}%</span>
               </div>
               <div className="progress progress-modern" style={{ height: '7px' }}>
@@ -77,7 +79,7 @@ const ManagerAISummary = () => {
             
             <div className="lead-quality-item">
               <div className="d-flex justify-content-between align-items-center mb-1">
-                <span className="text-secondary fw-semibold" style={{ fontSize: '0.82rem' }}>Medium Quality (Score 50–80)</span>
+                <span className="ai-quality-label fw-semibold" style={{ fontSize: '0.82rem' }}>Medium Quality (Score 50–80)</span>
                 <span className="badge bg-warning text-dark rounded-pill px-2.5 py-0.5 fw-bold" style={{ fontSize: '0.75rem' }}>{data.leadQuality.medium}%</span>
               </div>
               <div className="progress progress-modern" style={{ height: '7px' }}>
@@ -87,7 +89,7 @@ const ManagerAISummary = () => {
 
             <div className="lead-quality-item">
               <div className="d-flex justify-content-between align-items-center mb-1">
-                <span className="text-secondary fw-semibold" style={{ fontSize: '0.82rem' }}>Low Quality (Score &lt; 50)</span>
+                <span className="ai-quality-label fw-semibold" style={{ fontSize: '0.82rem' }}>Low Quality (Score &lt; 50)</span>
                 <span className="badge bg-danger rounded-pill px-2.5 py-0.5 fw-bold text-white" style={{ fontSize: '0.75rem' }}>{data.leadQuality.low}%</span>
               </div>
               <div className="progress progress-modern" style={{ height: '7px' }}>
@@ -101,12 +103,12 @@ const ManagerAISummary = () => {
       {/* AI Performance Summary Chart */}
       <div className="col-xl-4 col-lg-4 col-md-12 col-12">
         <div className="ai-glass-card h-100 d-flex flex-column">
-          <div className="card-header bg-transparent border-bottom border-light-subtle py-2 px-3 px-md-4 d-flex align-items-center justify-content-between">
+          <div className="card-header bg-transparent border-bottom border-light-subtle py-2 px-3 px-md-4 d-flex align-items-center justify-content-between ai-card-header">
             <h6 className="mb-0 fw-bold ai-gradient-text d-flex align-items-center gap-2" style={{ fontSize: '0.88rem' }}>
               <i className="fa-solid fa-chart-pie text-primary"></i>
               Performance Summary
             </h6>
-            <span className="badge rounded-pill px-2 py-0.5 fw-semibold" style={{ color: '#6366f1', background: 'rgba(99,102,241,0.1)', fontSize: '0.7rem' }}>Weekly Trend</span>
+            <span className="badge rounded-pill px-2 py-0.5 fw-semibold" style={{ color: isDarkMode ? '#34d399' : '#10b981', background: 'rgba(16,185,129,0.12)', fontSize: '0.7rem' }}>Weekly Trend</span>
           </div>
           <div className="card-body p-3 px-md-4 d-flex flex-column justify-content-center">
             <div style={{ height: '155px', width: '100%', position: 'relative' }}>
@@ -135,7 +137,7 @@ const ManagerAISummary = () => {
                     y: {
                       beginAtZero: true,
                       suggestedMax: Math.max(...(data.chartData?.datasets?.[0]?.data || [2]), 2),
-                      grid: { color: 'rgba(0, 0, 0, 0.04)', drawBorder: false },
+                      grid: { color: isDarkMode ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.04)', drawBorder: false },
                       ticks: { font: { family: "'Plus Jakarta Sans'", size: 10 }, color: '#94a3b8', stepSize: 1, precision: 0 }
                     },
                     x: {
@@ -153,7 +155,7 @@ const ManagerAISummary = () => {
       {/* AI Conversion Suggestions */}
       <div className="col-xl-4 col-lg-4 col-md-12 col-12">
         <div className="ai-glass-card h-100 d-flex flex-column">
-          <div className="card-header bg-transparent border-bottom border-light-subtle py-2 px-3 px-md-4 d-flex align-items-center justify-content-between">
+          <div className="card-header bg-transparent border-bottom border-light-subtle py-2 px-3 px-md-4 d-flex align-items-center justify-content-between ai-card-header">
             <h6 className="mb-0 fw-bold ai-gradient-text d-flex align-items-center gap-2" style={{ fontSize: '0.88rem' }}>
               <i className="fa-solid fa-wand-magic-sparkles text-info ai-pulse-icon"></i>
               Conversion Suggestions
@@ -163,11 +165,11 @@ const ManagerAISummary = () => {
           <div className="card-body p-3 px-md-4 d-flex flex-column justify-content-center">
             <ul className="list-unstyled mb-0 d-flex flex-column gap-2">
               {data.conversionSuggestions.map((suggestion, idx) => (
-                <li key={idx} className="d-flex align-items-start p-2 px-2.5 rounded-2 ai-suggestion-item border border-light-subtle shadow-sm">
+                <li key={idx} className="d-flex align-items-start p-2 px-2.5 rounded-2 ai-suggestion-item shadow-sm">
                   <div className="suggestion-icon-wrap me-2 mt-0.5 flex-shrink-0" style={{ fontSize: '0.82rem' }}>
                     <i className="fa-solid fa-circle-info text-info"></i>
                   </div>
-                  <span className="text-dark fw-medium lh-sm" style={{ fontSize: '0.8rem' }}>{suggestion}</span>
+                  <span className="ai-suggestion-text fw-medium lh-sm" style={{ fontSize: '0.8rem' }}>{suggestion}</span>
                 </li>
               ))}
             </ul>

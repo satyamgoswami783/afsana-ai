@@ -67,7 +67,7 @@ const Payment = () => {
       <div style="font-family: Arial, sans-serif; padding: 30px; max-width: 1000px; margin: 0 auto; border: 1px solid #ddd; background-color: #fff; color: #000000;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #ddd; padding-bottom: 15px;">
           <h1 style="text-align: center; font-size: 28px; margin: 0; flex-grow: 1; color: #000000;">INVOICE</h1>
-          <img src="/img/logo.png" alt="Logo" height="100">
+          <img src="/img/kiaan_logo.png" alt="Kiaan Technology" height="100">
         </div>
         
         <div style="margin-bottom: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">

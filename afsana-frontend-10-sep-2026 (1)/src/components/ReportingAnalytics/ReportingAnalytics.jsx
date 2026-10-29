@@ -16,7 +16,7 @@ import autoTable from "jspdf-autotable";
 import BASE_URL from "../../Config";
 import api from "../../interceptors/axiosInterceptor";
 import Swal from "sweetalert2";
-import Logo from '../../assets/logo.png';
+const Logo = "/img/kiaan_logo.png";
 import Loader from "../common/Loader";
 
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BASE_URL from "../Config";
 // import axios from 'axios';
@@ -12,42 +12,40 @@ import axios from "axios";
 import api from "../interceptors/axiosInterceptor";
 import { auth, provider, signInWithPopup } from "../interceptors/firebase"; // adjust path as needed
 import RegisterDeviceToken from "./RegisterDeviceToken";
+import { ThemeContext } from "../context/ThemeContext";
 import "./Login.css";
 
 const Login = ({ setLogin }) => {
+  const { isDarkMode, toggleTheme } = useContext(ThemeContext);
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
- const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-  const authToken = localStorage.getItem("authToken");
-  const role = localStorage.getItem("role");
+    const authToken = localStorage.getItem("authToken");
+    const role = localStorage.getItem("role");
 
-  if (authToken && role) {
-    if (role === "admin") {
-      navigate("/dashboard");
-    } else if (role === "student") {
-      navigate("/dashboardvisa");
-    } else if (role === "counselor") {
-      navigate("/councelor");
-    } else if (role === "staff") {
-      navigate("/staffDashboard");
+    if (authToken && role) {
+      if (role === "admin") {
+        navigate("/dashboard");
+      } else if (role === "student") {
+        navigate("/dashboardvisa");
+      } else if (role === "counselor") {
+        navigate("/councelor");
+      } else if (role === "staff") {
+        navigate("/staffDashboard");
+      } else if (role === "processors") {
+        navigate("/processorsDashboard");
+      } else if (role === "masteradmin") {
+        navigate("/masterDashboard");
+      }
     }
-    else if (role === "processors") {
-      navigate("/processorsDashboard");
-    }
-     else if (role === "masteradmin") {
-      navigate("/masterDashboard");
-    }
-  }
-}, []);
-
+  }, []);
 
   const handleChange = (event) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
   };
-
 
   const [gpsData, setGpsData] = useState(null);
   const [gpsStatus, setGpsStatus] = useState("pending");
@@ -138,7 +136,7 @@ const Login = ({ setLogin }) => {
         const userpermissionsResponse = await api.get(`permissions?user_id=${user.id}`);
         localStorage.setItem("permissions", JSON.stringify(permissionsResponse.data));
         localStorage.setItem("userpermissions", JSON.stringify(userpermissionsResponse.data));
-  setIsLoggedIn(true); 
+        setIsLoggedIn(true);
         // Cross-tab login sync
         localStorage.setItem('authEvent', Date.now());
 
@@ -232,9 +230,7 @@ const Login = ({ setLogin }) => {
 
       toast.error(backendMessage);
     }
-
   };
-
 
   return (
     <main className="login-page-wrapper">
@@ -280,6 +276,19 @@ const Login = ({ setLogin }) => {
 
         {/* Right Form Panel */}
         <div className="login-form-panel">
+          {/* Top-right Theme Toggle Button */}
+          <div className="login-theme-toggle-wrap">
+            <button
+              type="button"
+              className="theme-toggle-btn"
+              onClick={toggleTheme}
+              title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              aria-label="Toggle Theme"
+            >
+              {isDarkMode ? "☀️" : "🌙"}
+            </button>
+          </div>
+
           {/* Brand Header */}
           <div className="login-brand-header">
             <Link to="/">

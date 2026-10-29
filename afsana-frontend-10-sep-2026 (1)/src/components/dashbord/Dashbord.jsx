@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useContext } from 'react';
 import { Container, Row, Col, Card, Form, Table, Modal, Button, Badge } from 'react-bootstrap';
 import { Bar, Pie, Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement, Filler } from 'chart.js';
@@ -8,11 +8,13 @@ import BASE_URL from '../../Config';
 import './AdminDashboard.css';
 import Loader from '../common/Loader';
 import ManagerAISummary from '../AI/ManagerAISummary';
+import { ThemeContext } from '../../context/ThemeContext';
 
 // Register ChartJS Components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement, Filler);
 
 const Dashboard = () => {
+    const { isDarkMode } = useContext(ThemeContext);
     const [allDashboardData, setAllDashboardData] = useState({});
     const [dashboardData, setDashboardData] = useState({}); // Filtered data
     const [counselors, setCounselors] = useState([]);
@@ -317,7 +319,7 @@ const Dashboard = () => {
                 growthData.conversion_funnel.studentCount || 0,
                 growthData.conversion_funnel.application || 0
             ],
-            backgroundColor: 'rgba(59, 130, 246, 0.8)',
+            backgroundColor: isDarkMode ? 'rgba(16, 185, 129, 0.85)' : 'rgba(59, 130, 246, 0.8)',
             borderRadius: 8
         }]
     };
@@ -333,16 +335,16 @@ const Dashboard = () => {
         datasets: [{
             label: 'Inquiries',
             data: (growthData.weekly_inquiries_by_day || []).map(item => item.total_inquiries),
-            borderColor: '#6366f1',
-            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+            borderColor: isDarkMode ? '#34d399' : '#6366f1',
+            backgroundColor: isDarkMode ? 'rgba(16, 185, 129, 0.14)' : 'rgba(99, 102, 241, 0.1)',
             fill: true,
             tension: 0.45, // Smoother curves
             pointRadius: 6,
-            pointBackgroundColor: '#fff',
-            pointBorderColor: '#6366f1',
+            pointBackgroundColor: isDarkMode ? '#0d1511' : '#fff',
+            pointBorderColor: isDarkMode ? '#34d399' : '#6366f1',
             pointBorderWidth: 2,
             pointHoverRadius: 8,
-            pointHoverBackgroundColor: '#6366f1',
+            pointHoverBackgroundColor: isDarkMode ? '#34d399' : '#6366f1',
             pointHoverBorderColor: '#fff',
             pointHoverBorderWidth: 3,
         }]
@@ -353,9 +355,9 @@ const Dashboard = () => {
         labels: (growthData.country_wise_converted_leads || []).map(item => item.country),
         datasets: [{
             data: (growthData.country_wise_converted_leads || []).map(item => item.inquiries),
-            backgroundColor: ['#0f172a', '#6366f1', '#8b5cf6', '#10b981', '#ef4444', '#f59e0b', '#06b6d4', '#ec4899'],
-            borderWidth: 4,
-            borderColor: '#ffffff',
+            backgroundColor: ['#10b981', '#6366f1', '#f59e0b', '#3b82f6', '#8b5cf6', '#ef4444', '#06b6d4', '#ec4899'],
+            borderWidth: 3,
+            borderColor: isDarkMode ? '#101813' : '#ffffff',
             hoverOffset: 20
         }]
     };
@@ -370,7 +372,7 @@ const Dashboard = () => {
                     usePointStyle: true, 
                     padding: 20,
                     font: { family: "'Plus Jakarta Sans'", size: 12, weight: '600' },
-                    color: '#475569'
+                    color: isDarkMode ? '#cbd5e1' : '#475569'
                 } 
             },
             tooltip: {
@@ -388,12 +390,12 @@ const Dashboard = () => {
         scales: {
             y: {
                 beginAtZero: true,
-                grid: { color: 'rgba(0, 0, 0, 0.03)', drawBorder: false },
-                ticks: { font: { family: "'Plus Jakarta Sans'", size: 11 }, color: '#94a3b8' }
+                grid: { color: isDarkMode ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.04)', drawBorder: false },
+                ticks: { font: { family: "'Plus Jakarta Sans'", size: 11 }, color: isDarkMode ? '#94a3b8' : '#64748b' }
             },
             x: {
                 grid: { display: false },
-                ticks: { font: { family: "'Plus Jakarta Sans'", size: 11 }, color: '#94a3b8' }
+                ticks: { font: { family: "'Plus Jakarta Sans'", size: 11 }, color: isDarkMode ? '#94a3b8' : '#64748b' }
             }
         }
     };
@@ -409,26 +411,26 @@ const Dashboard = () => {
                     usePointStyle: true,
                     padding: 14,
                     font: { family: "'Plus Jakarta Sans'", size: 11, weight: '600' },
-                    color: '#475569'
+                    color: isDarkMode ? '#cbd5e1' : '#475569'
                 }
             }
         }
     };
 
     const cards = role === "staff" ? [
-        { key: 'totalleads', label: 'Total Leads', value: dashboardData.totalleads || 0, icon: <FaUsers />, color: '#3b82f6', glow: 'rgba(59, 130, 246, 0.1)', trend: '', trendUp: null },
-        { key: 'office_visited', label: 'Office Visited', value: dashboardData.office_visited || 0, icon: <FaUserCheck />, color: '#10b981', glow: 'rgba(16, 185, 129, 0.1)', trend: '', trendUp: null },
-        { key: 'scheduled_visits', label: 'Scheduled Visits', value: dashboardData.scheduled_visits || 0, icon: <FaCalendarAlt />, color: '#8b5cf6', glow: 'rgba(139, 92, 246, 0.1)', trend: '', trendUp: null },
-        { key: 'total_follow_ups', label: 'Follow Ups', value: dashboardData.total_follow_ups || 0, icon: <FaChartLine />, color: '#f59e0b', glow: 'rgba(245, 158, 11, 0.1)', trend: '', trendUp: null },
-        { key: 'conversion_rate', label: 'Conversion Rate', value: `${dashboardData.conversion_rate || 0}%`, icon: <FaTasks />, color: '#ec4899', glow: 'rgba(236, 72, 153, 0.1)', trend: '', trendUp: null },
-        { key: 'totalInquiries', label: 'Inquiries', value: dashboardData.totalInquiries || 0, icon: <FaQuestionCircle />, color: '#06b6d4', glow: 'rgba(6, 182, 212, 0.1)', trend: '', trendUp: null },
+        { key: 'totalleads', label: 'Total Leads', value: dashboardData.totalleads || 0, icon: <FaUsers />, color: '#3b82f6', glow: 'rgba(59, 130, 246, 0.14)', trend: '', trendUp: null },
+        { key: 'office_visited', label: 'Office Visited', value: dashboardData.office_visited || 0, icon: <FaUserCheck />, color: '#10b981', glow: 'rgba(16, 185, 129, 0.14)', trend: '', trendUp: null },
+        { key: 'scheduled_visits', label: 'Scheduled Visits', value: dashboardData.scheduled_visits || 0, icon: <FaCalendarAlt />, color: '#8b5cf6', glow: 'rgba(139, 92, 246, 0.14)', trend: '', trendUp: null },
+        { key: 'total_follow_ups', label: 'Follow Ups', value: dashboardData.total_follow_ups || 0, icon: <FaChartLine />, color: '#f59e0b', glow: 'rgba(245, 158, 11, 0.14)', trend: '', trendUp: null },
+        { key: 'conversion_rate', label: 'Conversion Rate', value: `${dashboardData.conversion_rate || 0}%`, icon: <FaTasks />, color: '#ec4899', glow: 'rgba(236, 72, 153, 0.14)', trend: '', trendUp: null },
+        { key: 'totalInquiries', label: 'Inquiries', value: dashboardData.totalInquiries || 0, icon: <FaQuestionCircle />, color: '#06b6d4', glow: 'rgba(6, 182, 212, 0.14)', trend: '', trendUp: null },
     ] : [
-        { key: 'totalleads', label: 'Total Leads', value: dashboardData.totalleads || 0, icon: <FaUsers />, color: '#3b82f6', glow: 'rgba(59, 130, 246, 0.1)', trend: '+12%', trendUp: true },
-        { key: 'totalstudents', label: 'Total Students', value: dashboardData.totalstudents || 0, icon: <FaUserGraduate />, color: '#10b981', glow: 'rgba(16, 185, 129, 0.1)', trend: '+5%', trendUp: true },
-        { key: 'totalcounselors', label: 'Total Counselors', value: dashboardData.totalcounselors || 0, icon: <FaUserTie />, color: '#8b5cf6', glow: 'rgba(139, 92, 246, 0.1)', trend: 'Stable', trendUp: null },
-        { key: 'totalUniversities', label: 'Total Universities', value: dashboardData.totalUniversities || 0, icon: <FaUniversity />, color: '#f59e0b', glow: 'rgba(245, 158, 11, 0.1)', trend: '+2', trendUp: true },
-        { key: 'totalTasks', label: 'Total Tasks', value: dashboardData.totalTasks || 0, icon: <FaTasks />, color: '#ec4899', glow: 'rgba(236, 72, 153, 0.1)', trend: '-3%', trendUp: false },
-        { key: 'totalInquiries', label: 'Inquiries', value: dashboardData.totalInquiries || 0, icon: <FaQuestionCircle />, color: '#06b6d4', glow: 'rgba(6, 182, 212, 0.1)', trend: '+18%', trendUp: true },
+        { key: 'totalleads', label: 'Total Leads', value: dashboardData.totalleads || 0, icon: <FaUsers />, color: '#3b82f6', glow: 'rgba(59, 130, 246, 0.14)', trend: '+12%', trendUp: true },
+        { key: 'totalstudents', label: 'Total Students', value: dashboardData.totalstudents || 0, icon: <FaUserGraduate />, color: '#10b981', glow: 'rgba(16, 185, 129, 0.14)', trend: '+5%', trendUp: true },
+        { key: 'totalcounselors', label: 'Total Counselors', value: dashboardData.totalcounselors || 0, icon: <FaUserTie />, color: '#8b5cf6', glow: 'rgba(139, 92, 246, 0.14)', trend: 'Stable', trendUp: null },
+        { key: 'totalUniversities', label: 'Total Universities', value: dashboardData.totalUniversities || 0, icon: <FaUniversity />, color: '#f59e0b', glow: 'rgba(245, 158, 11, 0.14)', trend: '+2', trendUp: true },
+        { key: 'totalTasks', label: 'Total Tasks', value: dashboardData.totalTasks || 0, icon: <FaTasks />, color: '#ec4899', glow: 'rgba(236, 72, 153, 0.14)', trend: '-3%', trendUp: false },
+        { key: 'totalInquiries', label: 'Inquiries', value: dashboardData.totalInquiries || 0, icon: <FaQuestionCircle />, color: '#06b6d4', glow: 'rgba(6, 182, 212, 0.14)', trend: '+18%', trendUp: true },
     ];
 
     return (
@@ -473,19 +475,19 @@ const Dashboard = () => {
                                     <p className="text-muted small mb-0">Target: {dashboardData.monthly_target || 100} visits per month</p>
                                 </div>
                                 <div className="text-end">
-                                    <h4 className="mb-0 fw-bold" style={{ color: '#6366f1' }}>{dashboardData.monthly_achieved || 0} / {dashboardData.monthly_target || 100}</h4>
-                                    <Badge bg="indigo" className="mt-1" style={{ backgroundColor: 'rgba(99, 102, 241, 0.1)', color: '#6366f1' }}>
+                                    <h4 className="mb-0 fw-bold" style={{ color: '#10b981' }}>{dashboardData.monthly_achieved || 0} / {dashboardData.monthly_target || 100}</h4>
+                                    <Badge bg="emerald" className="mt-1" style={{ backgroundColor: 'rgba(16, 185, 129, 0.12)', color: '#10b981' }}>
                                         {Math.round(((dashboardData.monthly_achieved || 0) / (dashboardData.monthly_target || 100)) * 100)}% Achieved
                                     </Badge>
                                 </div>
                             </div>
-                            <div className="progress-wrapper" style={{ height: '12px', background: 'rgba(99, 102, 241, 0.1)', borderRadius: '6px', overflow: 'hidden' }}>
+                            <div className="progress-wrapper" style={{ height: '12px', background: 'rgba(16, 185, 129, 0.12)', borderRadius: '6px', overflow: 'hidden' }}>
                                 <div 
                                     className="progress-bar-fill" 
                                     style={{ 
                                         width: `${Math.min(100, Math.round(((dashboardData.monthly_achieved || 0) / (dashboardData.monthly_target || 100)) * 100))}%`, 
                                         height: '100%', 
-                                        background: 'linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%)',
+                                        background: 'linear-gradient(90deg, #10b981 0%, #34d399 100%)',
                                         transition: 'width 1s ease-in-out'
                                     }}
                                 />
@@ -539,7 +541,7 @@ const Dashboard = () => {
                 <Card.Body className="p-3 p-md-4">
                     <div className="section-header d-flex justify-content-between align-items-center mb-3 mb-md-4">
                         <div className="d-flex align-items-center gap-2">
-                            <FaFilter className="text-indigo" />
+                            <FaFilter className="text-emerald" style={{ color: '#10b981' }} />
                             <h5 className="mb-0 fw-bold">Advanced Analytics Filters</h5>
                         </div>
                         <Button variant="link" onClick={handleResetFilters} className="text-danger p-0 text-decoration-none fw-bold small">Clear All Filters</Button>
@@ -648,7 +650,7 @@ const Dashboard = () => {
                                                     <div className="fw-700">{c.full_name}</div>
                                                     <div className="small text-muted opacity-75">Senior Consultant</div>
                                                 </td>
-                                                <td><Badge bg="white" text="dark" className="px-3 py-2 rounded-pill border shadow-sm fw-800">{c.converted_leads}</Badge></td>
+                                                <td><Badge className="px-3 py-2 rounded-pill border shadow-sm fw-800 counselor-units-badge">{c.converted_leads}</Badge></td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -673,4 +675,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-Dashboard;

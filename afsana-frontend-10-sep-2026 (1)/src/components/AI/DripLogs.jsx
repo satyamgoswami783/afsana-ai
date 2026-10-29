@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import config from "../../Config";
+import BASE_URL from "../../Config";
+import api from "../../interceptors/axiosInterceptor";
 import { format } from "date-fns";
 
 const DripLogs = () => {
@@ -13,20 +13,18 @@ const DripLogs = () => {
 
   const fetchLogs = async () => {
     try {
-      const response = await axios.get(`${config.apiUrl}/ai-dashboards/drip-logs`);
-      // Safe check in case response is not an array
+      const response = await api.get(`${BASE_URL}ai-dashboards/drip-logs`);
       if (Array.isArray(response.data)) {
         setLogs(response.data);
       } else if (response.data && Array.isArray(response.data.data)) {
         setLogs(response.data.data);
       } else {
-        console.warn("Unexpected response format:", response.data);
         setLogs([]);
       }
-      setLoading(false);
     } catch (error) {
       console.error("Error fetching drip logs:", error);
       setLogs([]);
+    } finally {
       setLoading(false);
     }
   };
@@ -42,12 +40,12 @@ const DripLogs = () => {
 
       {loading ? (
         <div className="text-center py-5">
-          <div className="spinner-border text-primary" role="status">
+          <div className="spinner-border text-success" role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
       ) : (
-        <div className="card shadow-sm border-0">
+        <div className="card shadow-sm border-0" style={{ borderRadius: "16px" }}>
           <div className="card-body p-0">
             <div className="table-responsive">
               <table className="table table-hover align-middle mb-0">
@@ -62,7 +60,7 @@ const DripLogs = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {logs.length > 0 ? (
+                  {Array.isArray(logs) && logs.length > 0 ? (
                     logs.map((log) => (
                       <tr key={log.id}>
                         <td>#{log.id}</td>
@@ -70,18 +68,24 @@ const DripLogs = () => {
                         <td>{log.phone_number}</td>
                         <td>
                           <span className="badge bg-info text-dark rounded-pill px-3 py-2">
-                            {log.campaign_type.replace(/_/g, ' ').toUpperCase()}
+                            {(log.campaign_type || "").replace(/_/g, " ").toUpperCase()}
                           </span>
                         </td>
                         <td>
-                          {log.status === 'sent' ? (
-                            <span className="badge bg-success rounded-pill px-3"><i className="bi bi-check-circle me-1"></i>Sent</span>
+                          {log.status === "sent" ? (
+                            <span className="badge bg-success rounded-pill px-3">
+                              <i className="bi bi-check-circle me-1"></i>Sent
+                            </span>
                           ) : (
-                            <span className="badge bg-danger rounded-pill px-3"><i className="bi bi-x-circle me-1"></i>Failed</span>
+                            <span className="badge bg-danger rounded-pill px-3">
+                              <i className="bi bi-x-circle me-1"></i>Failed
+                            </span>
                           )}
                         </td>
                         <td className="text-muted">
-                          {log.sent_date ? format(new Date(log.sent_date), "MMM dd, yyyy - hh:mm a") : "-"}
+                          {log.sent_date
+                            ? format(new Date(log.sent_date), "MMM dd, yyyy - hh:mm a")
+                            : "-"}
                         </td>
                       </tr>
                     ))

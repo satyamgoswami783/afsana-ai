@@ -1176,7 +1176,7 @@ const CounselorAddLead = ({ isEditMode = false, editData = null, onClose, onSucc
         </Form.Group>
 
         <div className="d-flex justify-content-end mt-4">
-          <Button variant="danger" onClick={onClose} className="me-2">
+          <Button variant="danger" type="button" onClick={onClose} className="me-2">
             Cancel
           </Button>
           <Button variant={isEditMode ? "warning" : "secondary"} type="submit">

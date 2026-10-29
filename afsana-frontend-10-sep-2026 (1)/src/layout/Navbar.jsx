@@ -286,7 +286,7 @@
 
 
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Bell,
@@ -299,6 +299,7 @@ import {
 import { io } from "socket.io-client";
 import "../layout/Navbar.css";
 import BASE_URL from "../Config";
+import { ThemeContext } from "../context/ThemeContext";
 
 const socket = io(BASE_URL.replace('/api/', ''), {
   reconnection: true,
@@ -307,6 +308,7 @@ const socket = io(BASE_URL.replace('/api/', ''), {
 });
 
 const Navbar = ({ toggleSidebar }) => {
+  const { isDarkMode, toggleTheme } = useContext(ThemeContext);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const navigate = useNavigate();
@@ -426,7 +428,11 @@ let processor_id = loginDetail?.id && loginDetail.id !== 135 ? loginDetail.id : 
   };
 
   const logout = () => {
+    const savedTheme = localStorage.getItem("app_theme");
     localStorage.clear();
+    if (savedTheme) {
+      localStorage.setItem("app_theme", savedTheme);
+    }
     sessionStorage.clear();
     navigate("/");
   };
@@ -452,16 +458,47 @@ let processor_id = loginDetail?.id && loginDetail.id !== 135 ? loginDetail.id : 
   }, [showNotifications]);
 
   return (
-    <nav className="navbar bg-white fixed-top w-100 z-50">
+    <nav className={`navbar portal-navbar fixed-top w-100 z-50 ${isDarkMode ? "dark-navbar" : "light-navbar"}`}>
       <div className="container-fluid d-flex justify-content-between align-items-center px-3 py-2">
         {/* Logo + Sidebar Toggle */}
         <div
           className="d-flex align-items-center gap-3"
           style={{ marginTop: "-20px" }}
         >
-          <img src="/img/logo.png" alt="Study First Info Ltd." height={70} />
+          <div className="d-flex align-items-center gap-2" style={{ cursor: "pointer" }} onClick={() => navigate("/")}>
+            <img
+              src="/img/kiaan_logo.png"
+              alt="Kiaan Technology"
+              height={46}
+              className="portal-navbar-logo"
+              style={{ objectFit: "contain" }}
+            />
+            <div className="d-none d-sm-flex flex-column" style={{ lineHeight: 1.05 }}>
+              <span
+                className="fw-bold"
+                style={{
+                  fontSize: "1.25rem",
+                  color: isDarkMode ? "#f8fafc" : "#064e3b",
+                  letterSpacing: "0.3px",
+                }}
+              >
+                Kiaan
+              </span>
+              <span
+                style={{
+                  fontSize: "0.58rem",
+                  color: isDarkMode ? "#34d399" : "#059669",
+                  letterSpacing: "1.8px",
+                  textTransform: "uppercase",
+                  fontWeight: 700,
+                }}
+              >
+                Technology
+              </span>
+            </div>
+          </div>
           <button
-            className="btn btn-light border"
+            className="btn btn-light border portal-sidebar-toggle-btn"
             onClick={(e) => {
               e.stopPropagation();
               toggleSidebar();
@@ -486,14 +523,26 @@ let processor_id = loginDetail?.id && loginDetail.id !== 135 ? loginDetail.id : 
 
         {/* Right Icons */}
         <div
-          className="d-flex align-items-center gap-4"
+          className="d-flex align-items-center gap-3 gap-md-4"
           style={{ marginTop: "-20px" }}
           ref={dropdownRef}
         >
+          {/* Light / Dark Mode Toggle Button */}
+          <button
+            type="button"
+            className="theme-toggle-btn portal-theme-toggle"
+            onClick={toggleTheme}
+            title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            aria-label="Toggle Theme"
+          >
+            {isDarkMode ? "☀️" : "🌙"}
+          </button>
+
           {/* Notifications */}
           <div className="position-relative">
             <Bell
               size={22}
+              className="portal-nav-icon"
               onClick={() => setShowNotifications(!showNotifications)}
               style={{ cursor: "pointer" }}
             />
@@ -504,7 +553,7 @@ let processor_id = loginDetail?.id && loginDetail.id !== 135 ? loginDetail.id : 
             )}
             {showNotifications && (
               <div
-                className="bg-white shadow p-3 rounded position-absolute"
+                className="bg-white shadow p-3 rounded position-absolute portal-notification-popup"
                 style={{
                   top: "400%",
                   transform: "translate(-50%, -50%)",
@@ -551,6 +600,7 @@ let processor_id = loginDetail?.id && loginDetail.id !== 135 ? loginDetail.id : 
           {/* Chat Icon */}
           <MessageCircle
             size={22}
+            className="portal-nav-icon"
             style={{ cursor: "pointer" }}
             onClick={handleChat}
           />
@@ -558,7 +608,7 @@ let processor_id = loginDetail?.id && loginDetail.id !== 135 ? loginDetail.id : 
           {/* Profile Dropdown */}
           <div className="dropdown">
             <div
-              className="d-flex align-items-center gap-2"
+              className="d-flex align-items-center gap-2 portal-profile-trigger"
               role="button"
               data-bs-toggle="dropdown"
               aria-expanded="false"
@@ -571,15 +621,15 @@ let processor_id = loginDetail?.id && loginDetail.id !== 135 ? loginDetail.id : 
                   style={{ width: "32px", height: "32px", objectFit: "cover" }}
                 />
               ) : (
-                <UserCircle size={26} />
+                <UserCircle size={26} className="portal-nav-icon" />
               )}
               <div className="d-flex flex-column">
                 <span className="fw-semibold loginName" style={{ fontSize: "0.9rem", lineHeight: "1.2" }}>{loginName}</span>
                 {userRole === "student" && <small className="text-muted" style={{ fontSize: "0.75rem" }}>Student</small>}
               </div>
-              <ChevronDown size={16} />
+              <ChevronDown size={16} className="portal-nav-icon" />
             </div>
-            <ul className="dropdown-menu dropdown-menu-end mt-2 shadow-sm">
+            <ul className="dropdown-menu dropdown-menu-end mt-2 shadow-sm portal-dropdown-menu">
               <li>
                 <Link className="dropdown-item" to="/profile">
                   Profile
@@ -610,541 +660,3 @@ let processor_id = loginDetail?.id && loginDetail.id !== 135 ? loginDetail.id : 
 };
 
 export default Navbar;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import React, { useEffect, useRef, useState } from "react";
-// import { Link, useNavigate } from "react-router-dom";
-// import {
-//   Bell,
-//   MessageCircle,
-//   UserCircle,
-//   LogOut,
-//   ChevronDown
-// } from "lucide-react";
-// import api from "../interceptors/axiosInterceptor";
-// import "../layout/Navbar.css";
-
-// const Navbar = ({ toggleSidebar }) => {
-//   const [showNotifications, setShowNotifications] = useState(false);
-//   const [notifications, setNotifications] = useState([]);
-//   const [userName, setUserName] = useState("User");
-//   const navigate = useNavigate();
-//   const dropdownRef = useRef(null);
-
-//   const loginDetail = JSON.parse(localStorage.getItem("login_detail"));
-//   const loginName = loginDetail?.full_name;
-//   const userRole = loginDetail?.role; // Assuming role is stored in login_detail
-
-//   useEffect(() => {
-//     // Initial fetch
-//     fetchNotifications();
-
-//     const interval = setInterval(() => {
-//       fetchNotifications();
-//     }, 7000);
-
-//     return () => clearInterval(interval);
-//   }, []);
-
-//   const fetchNotifications = async () => {
-//     try {
-//       const response = await api.get(`notification`);
-
-//       const tasks = (response.data.tasks || []).map((task) => ({
-//         ...task,
-//         type: "task",
-//       }));
-
-//       const inquiries = (response.data.inquiries || []).map((inquiry) => ({
-//         ...inquiry,
-//         type: "inquiry",
-//       }));
-
-//       // Combine all notifications initially
-//       let allNotifications = [...tasks, ...inquiries];
-      
-//       // If user is a student, filter out inquiries
-//       if (userRole === "student") {
-//         allNotifications = allNotifications.filter(notification => notification.type === "task");
-//       }
-
-//       setNotifications(allNotifications);
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
-
-
-//   const handleNotificationRead = async (item) => {
-//   // UI update
-//   setFilteredNotifications(prev =>
-//     prev.map(n =>
-//       n.id === item.id ? { ...n, notification_status: "1" } : n
-//     )
-//   );
-
-//   // Backend call
-//   await axios.post(`${BASE_URL}/notification-read/${item.id}`);
-// };
-
-//   const handleClearAllNotifications = async () => {
-//     // Separate task and inquiry IDs
-//     const taskIds = notifications
-//       .filter((n) => n.type === "task")
-//       .map((n) => n.id);
-
-//     const inquiryIds = notifications
-//       .filter((n) => n.type === "inquiry")
-//       .map((n) => n.id);
-
-//     try {
-//       await api.patch(`notifications/update-status`, {
-//         taskIds,
-//         inquiryIds,
-//       });
-//       await fetchNotifications();
-//     } catch (error) {
-//       console.error("Error clearing notifications:", error);
-//     }
-//   };
-
-//   const logout = () => {
-//     localStorage.clear();
-//     sessionStorage.clear();
-//     navigate("/");
-//   };
-
-//   const handleChat = () => {
-//     navigate("/chat");
-//   };
-
-//   useEffect(() => {
-//     const handleClickOutside = (event) => {
-//       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-//         setShowNotifications(false);
-//       }
-//     };
-
-//     if (showNotifications) {
-//       document.addEventListener("mousedown", handleClickOutside);
-//     }
-//     return () => {
-//       document.removeEventListener("mousedown", handleClickOutside);
-//     };
-//   }, [showNotifications]);
-
-//   // Filter notifications based on user role before displaying
-//   const filteredNotifications = userRole === "student" 
-//     ? notifications.filter(n => n.type === "task")
-//     : notifications;
-
-//   return (
-//     <nav className="navbar  bg-white fixed-top w-100 z-50">
-//       <div className="container-fluid d-flex justify-content-between align-items-center px-3 py-2">
-//         {/* Logo + Sidebar Toggle */}
-//         <div className="d-flex align-items-center gap-3" style={{ marginTop: "-20px" }}>
-//           <img src="/img/logo.png" alt="Study First Info Ltd." height={70} />
-//           {/* <img src="https://kiaantechnology.com/img/kt.png" alt="Logo" height={100} /> */}
-//           <button
-//             className="btn btn-light border"
-//             onClick={(e) => {
-//               e.stopPropagation();
-//               toggleSidebar();
-//             }}
-//           >
-//             ☰
-//           </button>
-//         </div>
-
-//         {/* Right Icons */}
-//         <div className="d-flex align-items-center gap-4" style={{ marginTop: "-20px" }} ref={dropdownRef}>
-//           {/* Notifications */}
-//        <div className="position-relative">
-//             <Bell
-//               size={22}
-//               onClick={() => setShowNotifications(!showNotifications)}
-//               style={{ cursor: "pointer" }}
-//             />
-//             {filteredNotifications.length > 0 && (
-//               <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-//                 {filteredNotifications.length}
-//               </span>
-//             )}
-//             {showNotifications && (
-//               <div
-//                 className="bg-white shadow p-3 rounded position-absolute"
-//                 style={{ right: 0, top: "120%", width: "300px", zIndex: 1000 }}
-//               >
-//                 <div className="d-flex justify-content-between align-items-center mb-2">
-//                   <strong>Notifications</strong>
-//                   <button
-//                     className="btn btn-sm btn-outline-secondary"
-//                     onClick={handleClearAllNotifications}
-//                   >
-//                     Clear All
-//                   </button>
-//                 </div>
-
-//                 <ul
-//                   className="list-unstyled mb-0"
-//                   style={{ maxHeight: "200px", overflowY: "auto" }}
-//                 >
-//                   {filteredNotifications.filter((n) => n.notification_status === "0").length > 0 ? (
-//                     <>
-//                       {/* Tasks Section */}
-//                       {filteredNotifications.some((n) => n.type === "task" && n.notification_status === "0") && (
-//                         <li className="text-primary fw-bold pb-1">📝 Tasks</li>
-//                       )}
-//                       {filteredNotifications
-//                         .filter((n) => n.type === "task" && n.notification_status === "0")
-//                         .map((item, index) => (
-//                           <li key={`task-${index}`} className="border-bottom py-2">
-//                             <div className="fw-semibold">{item.title}</div>
-//                             <small className="text-muted">
-//                               📅 Due Date: {item.due_date ? new Date(item.due_date).toLocaleDateString() : "N/A"}
-//                             </small>
-//                           </li>
-//                         ))}
-
-//                       {/* Inquiries Section - Only show if user is not a student */}
-//                       {userRole !== "student" && filteredNotifications.some((n) => n.type === "inquiry" && n.notification_status === "0") && (
-//                         <li className="text-success fw-bold pt-3 pb-1">📩 Inquiries</li>
-//                       )}
-//                       {userRole !== "student" && filteredNotifications
-//                         .filter((n) => n.type === "inquiry" && n.notification_status === "0")
-//                         .map((item, index) => (
-//                           <li key={`inq-${index}`} className="border-bottom py-2">
-//                             <div className="fw-semibold">{item.full_name}</div>
-//                             <div className="text-muted">📄 Type: <em>{item.inquiry_type}</em></div>
-//                             <small className="text-muted">
-//                               📅 Created: {item.created_at ? new Date(item.created_at).toLocaleDateString() : "N/A"}
-//                             </small>
-//                           </li>
-//                         ))}
-//                     </>
-//                   ) : (
-//                     <li className="text-muted text-center py-2">No new notifications</li>
-//                   )}
-//                 </ul>
-//               </div>
-//             )}
-//           </div>
-
-
-//           {/* Chat Icon */}
-//           <MessageCircle size={22} style={{ cursor: "pointer" }} onClick={handleChat} />
-
-//           {/* Profile Dropdown */}
-//           <div className="dropdown">
-//             <div
-//               className="d-flex align-items-center gap-2"
-//               role="button"
-//               data-bs-toggle="dropdown"
-//               aria-expanded="false"
-//             >
-//               <UserCircle size={26} />
-//               <span className="fw-semibold loginName">{loginName}</span>
-//               <ChevronDown size={16} />
-//             </div>
-//             <ul className="dropdown-menu dropdown-menu-end mt-2 shadow-sm">
-//               <li><Link className="dropdown-item" to="/profile">Profile</Link></li>
-//               <li><Link className="dropdown-item" to="/change-password">Change Password</Link></li>
-//               <li><hr className="dropdown-divider" /></li>
-//               <li>
-//                 <button className="dropdown-item text-danger d-flex align-items-center gap-2" onClick={logout}>
-//                   <LogOut size={16} /> Logout
-//                 </button>
-//               </li>
-//             </ul>
-//           </div>
-//         </div>
-//       </div>
-//     </nav>
-//   );
-// };
-
-// export default Navbar;
-
-
-
-
-// import React, { useEffect, useRef, useState } from "react";
-// import { Link, useNavigate } from "react-router-dom";
-// import {
-//   Bell,
-//   MessageCircle,
-//   UserCircle,
-//   LogOut,
-//   ChevronDown
-// } from "lucide-react";
-// import api from "../interceptors/axiosInterceptor";
-// import "../layout/Navbar.css";
-
-// const Navbar = ({ toggleSidebar }) => {
-//   const [showNotifications, setShowNotifications] = useState(false);
-//   const [notifications, setNotifications] = useState([]);
-//   const [userName, setUserName] = useState("User");
-//   const navigate = useNavigate();
-//   const dropdownRef = useRef(null);
-
-//   const loginDetail = JSON.parse(localStorage.getItem("login_detail"));
-//   const loginName = loginDetail?.full_name;
-//   const userRole = loginDetail?.role; // Assuming role is stored in login_detail
-
-//   useEffect(() => {
-//     // Initial fetch
-//     fetchNotifications();
-
-//     const interval = setInterval(() => {
-//       fetchNotifications();
-//     }, 7000);
-
-//     return () => clearInterval(interval);
-//   }, []);
-
-//   const fetchNotifications = async () => {
-//     try {
-//       const response = await api.get(`notification`);
-
-//       const tasks = (response.data.tasks || []).map((task) => ({
-//         ...task,
-//         type: "task",
-//       }));
-
-//       const inquiries = (response.data.inquiries || []).map((inquiry) => ({
-//         ...inquiry,
-//         type: "inquiry",
-//       }));
-
-//       // Combine all notifications initially
-//       let allNotifications = [...tasks, ...inquiries];
-      
-//       // If user is a student, filter out inquiries
-//       if (userRole === "student") {
-//         allNotifications = allNotifications.filter(notification => notification.type === "task");
-//       }
-
-//       setNotifications(allNotifications);
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
-
-//   const handleNotificationClick = async (item) => {
-//     // If notification is already read, do nothing
-//     if (item.notification_status === "1") return;
-    
-//     try {
-//       // Update UI immediately for better UX
-//       setNotifications(prev =>
-//         prev.map(n =>
-//           n.id === item.id ? { ...n, notification_status: "1" } : n
-//         )
-//       );
-      
-//       // Update backend
-//       await api.post(`notification-read/${item.id}`);
-//     } catch (error) {
-//       console.error("Error marking notification as read:", error);
-//       // Revert UI change if API call fails
-//       setNotifications(prev =>
-//         prev.map(n =>
-//           n.id === item.id ? { ...n, notification_status: "0" } : n
-//         )
-//       );
-//     }
-//   };
-
-//   const handleClearAllNotifications = async () => {
-//     // Separate task and inquiry IDs
-//     const taskIds = notifications
-//       .filter((n) => n.type === "task")
-//       .map((n) => n.id);
-
-//     const inquiryIds = notifications
-//       .filter((n) => n.type === "inquiry")
-//       .map((n) => n.id);
-
-//     try {
-//       await api.patch(`notifications/update-status`, {
-//         taskIds,
-//         inquiryIds,
-//       });
-//       await fetchNotifications();
-//     } catch (error) {
-//       console.error("Error clearing notifications:", error);
-//     }
-//   };
-
-//   const logout = () => {
-//     localStorage.clear();
-//     sessionStorage.clear();
-//     navigate("/");
-//   };
-
-//   const handleChat = () => {
-//     navigate("/chat");
-//   };
-
-//   useEffect(() => {
-//     const handleClickOutside = (event) => {
-//       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-//         setShowNotifications(false);
-//       }
-//     };
-
-//     if (showNotifications) {
-//       document.addEventListener("mousedown", handleClickOutside);
-//     }
-//     return () => {
-//       document.removeEventListener("mousedown", handleClickOutside);
-//     };
-//   }, [showNotifications]);
-
-//   // Filter notifications based on user role before displaying
-//   const filteredNotifications = userRole === "student" 
-//     ? notifications.filter(n => n.type === "task")
-//     : notifications;
-
-//   // Count unread notifications for badge
-//   const unreadCount = filteredNotifications.filter(n => n.notification_status === "0").length;
-
-//   return (
-//     <nav className="navbar bg-white fixed-top w-100 z-50">
-//       <div className="container-fluid d-flex justify-content-between align-items-center px-3 py-2">
-//         {/* Logo + Sidebar Toggle */}
-//         <div className="d-flex align-items-center gap-3" style={{ marginTop: "-20px" }}>
-//           <img src="/img/logo.png" alt="Logo" height={100} />
-//           <button
-//             className="btn btn-light border"
-//             onClick={(e) => {
-//               e.stopPropagation();
-//               toggleSidebar();
-//             }}
-//           >
-//             ☰
-//           </button>
-//         </div>
-
-//         {/* Right Icons */}
-//         <div className="d-flex align-items-center gap-4" style={{ marginTop: "-20px" }} ref={dropdownRef}>
-//           {/* Notifications */}
-//            <div className="position-relative">
-//             <Bell
-//               size={22}
-//               onClick={() => setShowNotifications(!showNotifications)}
-//               style={{ cursor: "pointer" }}
-//             />
-//             {filteredNotifications.length > 0 && (
-//               <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-//                 {filteredNotifications.length}
-//               </span>
-//             )}
-//             {showNotifications && (
-//               <div
-//                 className="bg-white shadow p-3 rounded position-absolute"
-//                 style={{ right: 0, top: "120%", width: "300px", zIndex: 1000 }}
-//               >
-//                 <div className="d-flex justify-content-between align-items-center mb-2">
-//                   <strong>Notifications</strong>
-//                   <button
-//                     className="btn btn-sm btn-outline-secondary"
-//                     onClick={handleClearAllNotifications}
-//                   >
-//                     Clear All
-//                   </button>
-//                 </div>
-
-//                 <ul
-//                   className="list-unstyled mb-0"
-//                   style={{ maxHeight: "200px", overflowY: "auto" }}
-//                 >
-//                   {filteredNotifications.filter((n) => n.notification_status === "0").length > 0 ? (
-//                     <>
-//                       {/* Tasks Section */}
-//                       {filteredNotifications.some((n) => n.type === "task" && n.notification_status === "0") && (
-//                         <li className="text-primary fw-bold pb-1">📝 Tasks</li>
-//                       )}
-//                       {filteredNotifications
-//                         .filter((n) => n.type === "task" && n.notification_status === "0")
-//                         .map((item, index) => (
-//                           <li key={`task-${index}`} className="border-bottom py-2">
-//                             <div className="fw-semibold">{item.title}</div>
-//                             <small className="text-muted">
-//                               📅 Due Date: {item.due_date ? new Date(item.due_date).toLocaleDateString() : "N/A"}
-//                             </small>
-//                           </li>
-//                         ))}
-
-//                       {/* Inquiries Section - Only show if user is not a student */}
-//                       {userRole !== "student" && filteredNotifications.some((n) => n.type === "inquiry" && n.notification_status === "0") && (
-//                         <li className="text-success fw-bold pt-3 pb-1">📩 Inquiries</li>
-//                       )}
-//                       {userRole !== "student" && filteredNotifications
-//                         .filter((n) => n.type === "inquiry" && n.notification_status === "0")
-//                         .map((item, index) => (
-//                           <li key={`inq-${index}`} className="border-bottom py-2">
-//                             <div className="fw-semibold">{item.full_name}</div>
-//                             <div className="text-muted">📄 Type: <em>{item.inquiry_type}</em></div>
-//                             <small className="text-muted">
-//                               📅 Created: {item.created_at ? new Date(item.created_at).toLocaleDateString() : "N/A"}
-//                             </small>
-//                           </li>
-//                         ))}
-//                     </>
-//                   ) : (
-//                     <li className="text-muted text-center py-2">No new notifications</li>
-//                   )}
-//                 </ul>
-//               </div>
-//             )}
-//           </div>
-
-
-//           {/* Chat Icon */}
-//           <MessageCircle size={22} style={{ cursor: "pointer" }} onClick={handleChat} />
-
-//           {/* Profile Dropdown */}
-//           <div className="dropdown">
-//             <div
-//               className="d-flex align-items-center gap-2"
-//               role="button"
-//               data-bs-toggle="dropdown"
-//               aria-expanded="false"
-//             >
-//               <UserCircle size={26} />
-//               <span className="fw-semibold loginName">{loginName}</span>
-//               <ChevronDown size={16} />
-//             </div>
-//             <ul className="dropdown-menu dropdown-menu-end mt-2 shadow-sm">
-//               <li><Link className="dropdown-item" to="/profile">Profile</Link></li>
-//               <li><Link className="dropdown-item" to="/change-password">Change Password</Link></li>
-//               <li><hr className="dropdown-divider" /></li>
-//               <li>
-//                 <button className="dropdown-item text-danger d-flex align-items-center gap-2" onClick={logout}>
-//                   <LogOut size={16} /> Logout
-//                 </button>
-//               </li>
-//             </ul>
-//           </div>
-//         </div>
-//       </div>
-//     </nav>
-//   );
-// };
-
-// export default Navbar;

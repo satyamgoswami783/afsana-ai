@@ -3,9 +3,22 @@ import { Container, Typography, Box } from "@mui/material";
 
 const PrivacyPolicy = () => {
   return (
-    <div style={{ background: "#0a0f1e", minHeight: "100vh", paddingTop: "80px", paddingBottom: "80px", color: "#f8fafc" }}>
-      <Container maxWidth="md" sx={{ py: 5, backgroundColor: "#0f172a", borderRadius: 4, border: '1px solid rgba(255,255,255,0.05)', boxShadow: '0 20px 50px rgba(0,0,0,0.3)', my: 4 }}>
-        <Typography variant="h3" component="h1" gutterBottom sx={{ fontFamily: "'Outfit', sans-serif", fontWeight: 800, textAlign: "center", background: 'linear-gradient(90deg,#38bdf8,#6366f1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', mb: 5 }}>
+    <div
+      style={{
+        backgroundColor: "#060a08",
+        backgroundImage:
+          "linear-gradient(to bottom, rgba(6, 10, 8, 0.86) 0%, rgba(6, 10, 8, 0.94) 100%), url('/img/landing_hero_campus.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+        minHeight: "100vh",
+        paddingTop: "80px",
+        paddingBottom: "80px",
+        color: "#f8fafc",
+      }}
+    >
+      <Container maxWidth="md" sx={{ py: 5, backgroundColor: "rgba(13, 21, 17, 0.92)", backdropFilter: "blur(16px)", borderRadius: 4, border: '1px solid rgba(16, 185, 129, 0.25)', boxShadow: '0 20px 50px rgba(0,0,0,0.45)', my: 4 }}>
+        <Typography variant="h3" component="h1" gutterBottom sx={{ fontFamily: "'Outfit', sans-serif", fontWeight: 800, textAlign: "center", background: 'linear-gradient(90deg, #34d399, #10b981, #fbbf24)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', mb: 5 }}>
           Privacy Policy
         </Typography>
 

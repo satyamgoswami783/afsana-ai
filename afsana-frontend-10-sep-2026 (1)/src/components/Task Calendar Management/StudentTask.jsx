@@ -35,9 +35,13 @@ const MyTasks = () => {
   const fetchTasks = async () => {
     try {
       const response = await api.get(`student_task/${studentid}`);
-      setTasksData(response.data);
+      setTasksData(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
-      console.error("Error fetching tasks:", error);
+      if (error?.response?.status === 404) {
+        setTasksData([]);
+      } else {
+        console.error("Error fetching tasks:", error);
+      }
     }
   };
 

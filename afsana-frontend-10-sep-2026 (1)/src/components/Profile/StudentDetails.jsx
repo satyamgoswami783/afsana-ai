@@ -84,7 +84,9 @@ const StudentDetails = () => {
     password: "",
     email: "",
     unique_id: "",
-    country: "" // Added country field
+    country: "", // Added country field
+    counselor_id: "",
+    processor_id: ""
   });
 
   const [photo, setPhoto] = useState(null);
@@ -108,7 +110,9 @@ const StudentDetails = () => {
       password: "",
       email: "",
       unique_id: "",
-      country: "" // Reset country field
+      country: "", // Reset country field
+      counselor_id: "",
+      processor_id: ""
     });
     setPhoto(null);
     setDocuments([]);
@@ -144,9 +148,8 @@ const StudentDetails = () => {
       resetForm();
       setShow(false);
 
-      // Reload students
-      const { data } = await api.get(`${BASE_URL}auth/getAllStudents`);
-      setStudentsData(data);
+      // Reload students with counselor and processor names
+      await fetchStudents();
       
       // Update next serial number
       if (!isEditing) {
@@ -289,11 +292,13 @@ const StudentDetails = () => {
       university_name: student.university_name
     });
 
-    // Reset selections
-    setSelectedCounselor(null);
-    setSelectedProcessor(null);
-    setFollowUpDate("");
-    setNotes("");
+    // Pre-populate current selections if already assigned
+    const existingCounselor = counselors.find(c => String(c.id) === String(student.counselor_id)) || null;
+    const existingProcessor = processors.find(p => String(p.id) === String(student.processor_id)) || null;
+    setSelectedCounselor(existingCounselor);
+    setSelectedProcessor(existingProcessor);
+    setFollowUpDate(student.follow_up ? String(student.follow_up).split('T')[0] : new Date().toISOString().split('T')[0]);
+    setNotes(student.notes || "");
     setShowAssignModal(true);
   };
 
@@ -305,15 +310,11 @@ const StudentDetails = () => {
         Swal.fire("Warning", "Please select a counselor", "warning");
         return;
       }
-      if (!followUpDate) {
-        Swal.fire("Warning", "Please select a follow-up date", "warning");
-        return;
-      }
 
       const payload = {
         student_id: selectedApplication.id,
         counselor_id: selectedCounselor.id,
-        follow_up: followUpDate,
+        follow_up: followUpDate || new Date().toISOString().split('T')[0],
         notes: notes
       };
 
@@ -1032,6 +1033,40 @@ const StudentDetails = () => {
                   <option value="ST">ST</option>
                   <option value="OBC">OBC</option>
                   <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-md-6 mb-3">
+                <label className="form-label">Assign Counselor (Optional)</label>
+                <select
+                  className="form-select"
+                  value={formData.counselor_id || ""}
+                  onChange={(e) => setFormData({ ...formData, counselor_id: e.target.value })}
+                >
+                  <option value="">-- Select Counselor --</option>
+                  {counselors?.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.full_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="col-md-6 mb-3">
+                <label className="form-label">Assign Processor (Optional)</label>
+                <select
+                  className="form-select"
+                  value={formData.processor_id || ""}
+                  onChange={(e) => setFormData({ ...formData, processor_id: e.target.value })}
+                >
+                  <option value="">-- Select Processor --</option>
+                  {processors?.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.full_name}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>

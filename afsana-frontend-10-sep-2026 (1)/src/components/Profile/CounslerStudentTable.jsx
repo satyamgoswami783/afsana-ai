@@ -53,6 +53,7 @@ const CounslerStudentTable = () => {
 
   const [formData, setFormData] = useState({
     user_id: user_id,
+    counselor_id: counselor_id,
     full_name: "",
     father_name: "",
     admission_no: "",
@@ -136,6 +137,7 @@ const CounslerStudentTable = () => {
     setIsEditing(false);
     setFormData({
       user_id: user_id,
+      counselor_id: counselor_id,
       full_name: "",
       father_name: "",
       admission_no: "",

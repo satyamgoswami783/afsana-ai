@@ -67,7 +67,7 @@ const ProcessorsDashboard = () => {
 
   useEffect(() => {
     fetchDashboardData();
-  }, [processorId]); // Remove filters from dependency to only fetch on button click or initial load. Wait, let's fetch on apply.
+  }, [processorId]);
 
   const handleApplyFilters = () => {
     fetchDashboardData();
@@ -79,7 +79,6 @@ const ProcessorsDashboard = () => {
     setToDate("");
     setSelectedCountry("");
     setSelectedUniversity("");
-    // We need to fetch data after state updates. setTimeout is a hack, better to use a useEffect or just pass empty params.
     setTimeout(() => {
        api.get(`${BASE_URL}processordashboard/${processorId}`).then(res => {
          if (res.data.success) {
@@ -96,7 +95,6 @@ const ProcessorsDashboard = () => {
   };
 
   const handleExport = () => {
-    // Helper function to properly escape CSV values
     const escapeCsv = (val) => {
       if (val === null || val === undefined) return '""';
       const str = String(val);
@@ -107,8 +105,6 @@ const ProcessorsDashboard = () => {
     };
 
     const rows = [];
-    
-    // Section 1: Summary
     rows.push(["Summary Report"]);
     rows.push(["Metric", "Value"]);
     rows.push(["Assigned Students", totalApplications]);
@@ -116,7 +112,6 @@ const ProcessorsDashboard = () => {
     rows.push(["Total Tasks", totalTasks]);
     rows.push([]);
 
-    // Section 2: Visa Stages
     rows.push(["Visa Stages Overview"]);
     rows.push(["Stage", "Count"]);
     Object.entries(allStages).forEach(([stage, count]) => {
@@ -124,7 +119,6 @@ const ProcessorsDashboard = () => {
     });
     rows.push([]);
 
-    // Section 3: Pending Tasks
     rows.push(["Pending Tasks Details"]);
     rows.push(["Task Name", "Student Name", "Due Date", "Status"]);
     if (recentTasks && recentTasks.length > 0) {
@@ -140,9 +134,7 @@ const ProcessorsDashboard = () => {
       rows.push(["No pending tasks found"]);
     }
 
-    // Join rows with correct \n newline
     const csvContent = rows.map(row => row.map(escapeCsv).join(",")).join("\n");
-
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
@@ -154,14 +146,13 @@ const ProcessorsDashboard = () => {
     document.body.removeChild(link);
   };
 
-
   const barData = {
     labels: chartData.map((item) => item.label),
     datasets: [
       {
         label: "Count",
         data: chartData.map((item) => item.value),
-        backgroundColor: ["#4F46E5", "#F59E0B", "#10B981"],
+        backgroundColor: ["#10B981", "#F59E0B", "#059669"],
         borderRadius: 8,
       },
     ],
@@ -173,7 +164,7 @@ const ProcessorsDashboard = () => {
       {
         label: "Distribution",
         data: chartData.map((item) => item.value),
-        backgroundColor: ["#4F46E5", "#F59E0B", "#10B981"],
+        backgroundColor: ["#10B981", "#F59E0B", "#059669"],
         borderWidth: 0,
         hoverOffset: 15,
       },
@@ -181,44 +172,77 @@ const ProcessorsDashboard = () => {
   };
 
   return (
-    <div className="p-4" style={{ backgroundColor: "#F9FAFB", minHeight: "100vh" }}>
+    <div className="p-4 dashboard-container">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 style={{ fontWeight: "700", color: "#111827", margin: 0 }}>Processor Dashboard</h2>
-        <button className="btn btn-success" onClick={handleExport}>
+        <h2 style={{ fontWeight: "800", margin: 0 }}>Processor Dashboard</h2>
+        <button
+          className="btn text-white fw-semibold"
+          onClick={handleExport}
+          style={{
+            background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+            border: "none",
+            borderRadius: "10px",
+            boxShadow: "0 4px 14px rgba(16, 185, 129, 0.3)",
+          }}
+        >
           <i className="fa-solid fa-file-export me-2"></i> Export Report
         </button>
       </div>
 
       {/* Filter Section */}
-      <div className="card shadow-sm mb-4 border-0" style={{ borderRadius: "12px" }}>
+      <div className="card shadow-sm mb-4 border-0" style={{ borderRadius: "16px" }}>
         <div className="card-body">
           <div className="row g-3">
             <div className="col-md-3">
-              <label className="form-label" style={{ fontSize: "0.85rem", fontWeight: "600", color: "#4B5563" }}>Search</label>
+              <label className="form-label" style={{ fontSize: "0.85rem", fontWeight: "600" }}>Search</label>
               <input type="text" className="form-control" placeholder="Name or Email" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
             </div>
             <div className="col-md-2">
-              <label className="form-label" style={{ fontSize: "0.85rem", fontWeight: "600", color: "#4B5563" }}>From Date</label>
+              <label className="form-label" style={{ fontSize: "0.85rem", fontWeight: "600" }}>From Date</label>
               <input type="date" className="form-control" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
             </div>
             <div className="col-md-2">
-              <label className="form-label" style={{ fontSize: "0.85rem", fontWeight: "600", color: "#4B5563" }}>To Date</label>
+              <label className="form-label" style={{ fontSize: "0.85rem", fontWeight: "600" }}>To Date</label>
               <input type="date" className="form-control" value={toDate} onChange={(e) => setToDate(e.target.value)} />
             </div>
             <div className="col-md-2">
-              <label className="form-label" style={{ fontSize: "0.85rem", fontWeight: "600", color: "#4B5563" }}>Country</label>
+              <label className="form-label" style={{ fontSize: "0.85rem", fontWeight: "600" }}>Country</label>
               <select className="form-select" value={selectedCountry} onChange={(e) => setSelectedCountry(e.target.value)}>
                 <option value="">All</option>
                 {countryOptions.map((c, i) => <option key={i} value={c}>{c}</option>)}
               </select>
             </div>
             <div className="col-md-3">
-              <label className="form-label" style={{ fontSize: "0.85rem", fontWeight: "600", color: "#4B5563" }}>University</label>
+              <label className="form-label" style={{ fontSize: "0.85rem", fontWeight: "600" }}>University</label>
               <input type="text" className="form-control" placeholder="University Name" value={selectedUniversity} onChange={(e) => setSelectedUniversity(e.target.value)} />
             </div>
             <div className="col-12 d-flex justify-content-end gap-2 mt-3">
-              <button className="btn btn-light" onClick={handleResetFilters} style={{ fontWeight: "500", border: "1px solid #E5E7EB" }}>Reset</button>
-              <button className="btn btn-primary" onClick={handleApplyFilters} style={{ fontWeight: "500", background: "#4F46E5", border: "none" }}>Apply Filters</button>
+              <button
+                className="btn"
+                onClick={handleResetFilters}
+                style={{
+                  fontWeight: "600",
+                  background: "rgba(245, 158, 11, 0.12)",
+                  color: "#d97706",
+                  border: "1px solid rgba(245, 158, 11, 0.35)",
+                  borderRadius: "10px",
+                }}
+              >
+                Reset
+              </button>
+              <button
+                className="btn text-white"
+                onClick={handleApplyFilters}
+                style={{
+                  fontWeight: "600",
+                  background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                  border: "none",
+                  borderRadius: "10px",
+                  boxShadow: "0 4px 14px rgba(16, 185, 129, 0.3)",
+                }}
+              >
+                Apply Filters
+              </button>
             </div>
           </div>
         </div>
@@ -229,22 +253,23 @@ const ProcessorsDashboard = () => {
         <div className="col-12 col-md-4">
           <div
             style={{
-              background: "linear-gradient(135deg, #4F46E5 0%, #3730A3 100%)",
+              background: "linear-gradient(145deg, #0d1f17 0%, #132e22 100%)",
+              border: "1px solid rgba(16, 185, 129, 0.4)",
               color: "#fff",
               padding: "24px",
               borderRadius: "16px",
               textAlign: "left",
-              boxShadow: "0 10px 15px -3px rgba(79, 70, 229, 0.3)",
+              boxShadow: "0 12px 24px -6px rgba(13, 31, 23, 0.35)",
               position: "relative",
               overflow: "hidden"
             }}
           >
             <div style={{ position: "relative", zIndex: 2 }}>
-              <h6 style={{ opacity: 0.8, fontSize: "0.9rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Assigned Students</h6>
-              <h2 style={{ fontSize: "2.5rem", fontWeight: "800", margin: "8px 0" }}>{totalApplications}</h2>
-              <p style={{ fontSize: "0.8rem", margin: 0, opacity: 0.9 }}>Total students under management</p>
+              <h6 style={{ color: "#34d399", fontSize: "0.85rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}>Assigned Students</h6>
+              <h2 style={{ fontSize: "2.5rem", fontWeight: "800", margin: "8px 0", color: "#ffffff" }}>{totalApplications}</h2>
+              <p style={{ fontSize: "0.8rem", margin: 0, color: "#cbd5e1" }}>Total students under management</p>
             </div>
-            <i className="fa-solid fa-user-graduate" style={{ position: "absolute", right: "20px", bottom: "20px", fontSize: "4rem", opacity: 0.15, zIndex: 1 }}></i>
+            <i className="fa-solid fa-user-graduate" style={{ position: "absolute", right: "20px", bottom: "20px", fontSize: "4rem", color: "#34d399", opacity: 0.18, zIndex: 1 }}></i>
           </div>
         </div>
 
@@ -252,22 +277,23 @@ const ProcessorsDashboard = () => {
         <div className="col-12 col-md-4">
           <div
             style={{
-              background: "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)",
+              background: "linear-gradient(135deg, #091510 0%, #1f2912 100%)",
+              border: "1px solid rgba(251, 191, 36, 0.4)",
               color: "#fff",
               padding: "24px",
               borderRadius: "16px",
               textAlign: "left",
-              boxShadow: "0 10px 15px -3px rgba(245, 158, 11, 0.3)",
+              boxShadow: "0 12px 24px -6px rgba(245, 158, 11, 0.25)",
               position: "relative",
               overflow: "hidden"
             }}
           >
             <div style={{ position: "relative", zIndex: 2 }}>
-              <h6 style={{ opacity: 0.8, fontSize: "0.9rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Visa Processing</h6>
-              <h2 style={{ fontSize: "2.5rem", fontWeight: "800", margin: "8px 0" }}>{totaldocumentCount}</h2>
-              <p style={{ fontSize: "0.8rem", margin: 0, opacity: 0.9 }}>Applications in visa stage</p>
+              <h6 style={{ color: "#fbbf24", fontSize: "0.85rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}>Visa Processing</h6>
+              <h2 style={{ fontSize: "2.5rem", fontWeight: "800", margin: "8px 0", color: "#ffffff" }}>{totaldocumentCount}</h2>
+              <p style={{ fontSize: "0.8rem", margin: 0, color: "#cbd5e1" }}>Applications in visa stage</p>
             </div>
-            <i className="fa-solid fa-passport" style={{ position: "absolute", right: "20px", bottom: "20px", fontSize: "4rem", opacity: 0.15, zIndex: 1 }}></i>
+            <i className="fa-solid fa-passport" style={{ position: "absolute", right: "20px", bottom: "20px", fontSize: "4rem", color: "#fbbf24", opacity: 0.18, zIndex: 1 }}></i>
           </div>
         </div>
 
@@ -275,22 +301,22 @@ const ProcessorsDashboard = () => {
         <div className="col-12 col-md-4">
           <div
             style={{
-              background: "linear-gradient(135deg, #10B981 0%, #059669 100%)",
+              background: "linear-gradient(135deg, #10B981 0%, #047857 100%)",
               color: "#fff",
               padding: "24px",
               borderRadius: "16px",
               textAlign: "left",
-              boxShadow: "0 10px 15px -3px rgba(16, 185, 129, 0.3)",
+              boxShadow: "0 10px 20px -3px rgba(16, 185, 129, 0.35)",
               position: "relative",
               overflow: "hidden"
             }}
           >
             <div style={{ position: "relative", zIndex: 2 }}>
-              <h6 style={{ opacity: 0.8, fontSize: "0.9rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Total Tasks</h6>
-              <h2 style={{ fontSize: "2.5rem", fontWeight: "800", margin: "8px 0" }}>{totalTasks}</h2>
+              <h6 style={{ opacity: 0.9, fontSize: "0.85rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}>Total Tasks</h6>
+              <h2 style={{ fontSize: "2.5rem", fontWeight: "800", margin: "8px 0", color: "#ffffff" }}>{totalTasks}</h2>
               <p style={{ fontSize: "0.8rem", margin: 0, opacity: 0.9 }}>Pending tasks for students</p>
             </div>
-            <i className="fa-solid fa-list-check" style={{ position: "absolute", right: "20px", bottom: "20px", fontSize: "4rem", opacity: 0.15, zIndex: 1 }}></i>
+            <i className="fa-solid fa-list-check" style={{ position: "absolute", right: "20px", bottom: "20px", fontSize: "4rem", opacity: 0.18, zIndex: 1 }}></i>
           </div>
         </div>
       </div>
@@ -298,16 +324,8 @@ const ProcessorsDashboard = () => {
       <div className="row g-4">
         {/* Workload Bar Chart */}
         <div className="col-12 col-md-6">
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: "16px",
-              padding: "24px",
-              boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-              height: "100%",
-            }}
-          >
-            <h5 className="mb-4" style={{ fontWeight: "600", color: "#374151" }}>Workload Overview</h5>
+          <div className="card border-0 p-4 h-100 shadow-sm" style={{ borderRadius: "16px" }}>
+            <h5 className="mb-4 fw-bold">Workload Overview</h5>
             <Bar
               data={barData}
               options={{
@@ -326,16 +344,8 @@ const ProcessorsDashboard = () => {
 
         {/* Distribution Pie Chart */}
         <div className="col-12 col-md-6">
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: "16px",
-              padding: "24px",
-              boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-              height: "100%",
-            }}
-          >
-            <h5 className="mb-4" style={{ fontWeight: "600", color: "#374151" }}>Distribution</h5>
+          <div className="card border-0 p-4 h-100 shadow-sm" style={{ borderRadius: "16px" }}>
+            <h5 className="mb-4 fw-bold">Distribution</h5>
             <div style={{ height: "300px", display: "flex", justifyContent: "center" }}>
               <Pie
                 data={pieData}
@@ -355,15 +365,8 @@ const ProcessorsDashboard = () => {
       {/* Recent Tasks Table */}
       <div className="row g-4 mt-4">
         <div className="col-12">
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: "16px",
-              padding: "24px",
-              boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-            }}
-          >
-            <h5 className="mb-4" style={{ fontWeight: "600", color: "#374151" }}>Pending Tasks for Students</h5>
+          <div className="card border-0 p-4 shadow-sm" style={{ borderRadius: "16px" }}>
+            <h5 className="mb-4 fw-bold">Pending Tasks for Students</h5>
             <div className="table-responsive">
               <table className="table table-hover align-middle">
                 <thead className="table-light">
@@ -385,8 +388,8 @@ const ProcessorsDashboard = () => {
                           <span 
                             className="badge" 
                             style={{ 
-                              backgroundColor: task.status === "Completed" ? "#D1FAE5" : "#FEF3C7", 
-                              color: task.status === "Completed" ? "#065F46" : "#92400E" 
+                              backgroundColor: task.status === "Completed" ? "rgba(16, 185, 129, 0.2)" : "rgba(245, 158, 11, 0.2)", 
+                              color: task.status === "Completed" ? "#10b981" : "#f59e0b" 
                             }}
                           >
                             {task.status}
@@ -409,29 +412,24 @@ const ProcessorsDashboard = () => {
       {/* All Stages Overview */}
       <div className="row g-4 mt-2">
         <div className="col-12">
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: "16px",
-              padding: "24px",
-              boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-            }}
-          >
-            <h5 className="mb-4" style={{ fontWeight: "600", color: "#374151" }}>All Stages Overview</h5>
+          <div className="card border-0 p-4 shadow-sm" style={{ borderRadius: "16px" }}>
+            <h5 className="mb-4 fw-bold">All Stages Overview</h5>
             <div className="row g-3">
               {Object.entries(allStages).map(([stage, count], index) => (
                 <div className="col-6 col-md-3" key={index}>
-                  <div style={{
-                    padding: "16px",
-                    borderRadius: "12px",
-                    backgroundColor: "#F3F4F6",
-                    borderLeft: "4px solid #4F46E5",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center"
-                  }}>
-                    <span style={{ fontSize: "0.85rem", color: "#6B7280", fontWeight: "600", textTransform: "uppercase" }}>{stage}</span>
-                    <span style={{ fontSize: "1.8rem", color: "#111827", fontWeight: "800" }}>{count}</span>
+                  <div
+                    className="p-3 rounded-3"
+                    style={{
+                      background: "rgba(16, 185, 129, 0.08)",
+                      border: "1px solid rgba(16, 185, 129, 0.22)",
+                      borderLeft: "4px solid #10b981",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center"
+                    }}
+                  >
+                    <span className="text-muted" style={{ fontSize: "0.82rem", fontWeight: "700", textTransform: "uppercase" }}>{stage}</span>
+                    <span style={{ fontSize: "1.8rem", color: "#10b981", fontWeight: "800" }}>{count}</span>
                   </div>
                 </div>
               ))}

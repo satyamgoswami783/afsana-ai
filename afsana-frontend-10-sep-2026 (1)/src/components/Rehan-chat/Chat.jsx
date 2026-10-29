@@ -843,9 +843,9 @@ const ChatAppLayout = () => {
     };
 
     return (
-        <div className="d-flex flex-column vh-100">
+        <div className="rehan-chat-wrapper d-flex flex-column">
             {/* Mobile header */}
-            <div className="d-flex d-md-none align-items-center p-2 bg-light border-bottom">
+            <div className="d-flex d-md-none align-items-center p-2 chat-main-header">
                 <Button
                     variant="light"
                     onClick={() => setShowSidebar(!showSidebar)}
@@ -853,7 +853,7 @@ const ChatAppLayout = () => {
                 >
                     {showSidebar ? '✕' : '☰'}
                 </Button>
-                <h5 className="mb-0 text-truncate">
+                <h5 className="mb-0 text-truncate chat-main-header-title">
                     {selectedChat ?
                         `Chat with ${selectedChat.type === 'group' ? selectedChat.group_name : selectedChat.full_name}` :
                         'Messaging'}
@@ -863,15 +863,13 @@ const ChatAppLayout = () => {
             <div className="d-flex flex-grow-1 overflow-hidden">
                 {/* Sidebar */}
                 <div
-                    className={`chat-sidebar border-end p-3 bg-light ${showSidebar ? 'd-block' : 'd-none'} d-md-block`}
-                    style={{ width: '350px', minWidth: '350px' }}
+                    className={`chat-sidebar p-3 ${showSidebar ? 'd-flex' : 'd-none'} d-md-flex`}
                 >
                     <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 mb-3">
-                        <h5 className="fw-bold mb-0">Chats</h5>
+                        <h5 className="chat-sidebar-title mb-0">Chats</h5>
                         <Button
-                            variant="primary"
                             size="sm"
-                            className="ms-sm-auto"
+                            className="chat-group-btn ms-sm-auto"
                             onClick={() => setShowGroupModal(true)}
                         >
                             + Group
@@ -879,30 +877,30 @@ const ChatAppLayout = () => {
                     </div>
 
                     <div className="mb-3 d-flex gap-2 align-items-center">
-                        <div className="input-group input-group-sm flex-grow-1">
-                            <span className="input-group-text bg-white border-end-0">
-                                <i className="fa-solid fa-magnifying-glass text-muted"></i>
+                        <div className="input-group input-group-sm flex-grow-1 chat-search-group">
+                            <span className="input-group-text">
+                                <i className="fa-solid fa-magnifying-glass"></i>
                             </span>
                             <input
                                 type="text"
-                                className="form-control border-start-0 ps-0"
+                                className="form-control"
                                 placeholder="Search chats..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 style={{ boxShadow: 'none' }}
                             />
                         </div>
-                        <Button 
-                            variant={showImportantOnly ? "warning" : "outline-secondary"} 
-                            size="sm" 
+                        <button
+                            type="button"
+                            className={`chat-star-filter-btn ${showImportantOnly ? 'active' : ''}`}
                             onClick={() => setShowImportantOnly(!showImportantOnly)}
                             title="Show Important Only"
                         >
                             <i className={`fa-${showImportantOnly ? 'solid' : 'regular'} fa-star`}></i>
-                        </Button>
+                        </button>
                     </div>
 
-                    <div className="chat-list-container" style={{ height: 'calc(100vh - 180px)', overflowY: 'auto' }}>
+                    <div className="chat-list-container">
                         {allChats
                             .filter(chat => {
                                 const name = (chat.full_name || chat.group_name || "").toLowerCase();
@@ -953,79 +951,98 @@ const ChatAppLayout = () => {
                                 const timeB = b.last_message_time ? new Date(b.last_message_time).getTime() : 0;
                                 return timeB - timeA;
                             })
-                            .map((chat) => (
-                            <div
-                                key={`${chat.type}-${chat.id}`}
-                                className={`p-2 mb-2 rounded shadow-sm d-flex align-items-center justify-content-between ${selectedChat?.id === chat.id && selectedChat?.type === chat.type ? 'border border-primary bg-primary text-white' : 'bg-white'}`}
-                                onClick={() => openChat(chat)}
-                                style={{ cursor: 'pointer', transition: 'all 0.2s' }}
-                            >
-                                <div className="d-flex align-items-center flex-grow-1 overflow-hidden">
-                                    <div className="me-2 fs-4" style={{ minWidth: '40px' }}>{chat.type === 'user' ? '👤' : '👥'}</div>
-                                    <div className="overflow-hidden">
-                                        <div className="fw-bold text-truncate" style={{ fontSize: '0.9rem' }}>
-                                            {chat.type === 'user' && chat.id === currentUserId ? 'You' : `${chat.full_name || chat.group_name} ${chat.type === "user" ? `(${chat?.role})` : ""}`}
+                            .map((chat) => {
+                                const isActive = selectedChat?.id === chat.id && selectedChat?.type === chat.type;
+                                const displayName = chat.full_name || chat.group_name || 'U';
+                                const initial = displayName.trim().charAt(0).toUpperCase();
+                                return (
+                                    <div
+                                        key={`${chat.type}-${chat.id}`}
+                                        className={`chat-contact-card d-flex align-items-center justify-content-between ${isActive ? 'active' : ''}`}
+                                        onClick={() => openChat(chat)}
+                                    >
+                                        <div className="d-flex align-items-center flex-grow-1 overflow-hidden">
+                                            <div className="chat-avatar-badge me-3">
+                                                {chat.type === 'group' ? <i className="fa-solid fa-users"></i> : initial}
+                                            </div>
+                                            <div className="overflow-hidden">
+                                                <div className="fw-bold text-truncate" style={{ fontSize: '0.92rem' }}>
+                                                    {chat.type === 'user' && chat.id === currentUserId ? 'You' : `${chat.full_name || chat.group_name} ${chat.type === "user" && chat?.role ? `(${chat?.role})` : ""}`}
+                                                </div>
+                                                <div className="chat-contact-sub text-capitalize">
+                                                    {chat.type}
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className={`small ${selectedChat?.id === chat.id ? 'text-white-50' : 'text-muted'}`} style={{ fontSize: '0.75rem' }}>
-                                            {chat.type}
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <div className="d-flex flex-column align-items-end ms-2" style={{ minWidth: '60px' }}>
-                                    <div className="d-flex align-items-center gap-1 mb-1">
-                                        <i 
-                                            className={`fa-${importantUsers.includes(chat.id) ? 'solid text-warning' : 'regular text-muted'} fa-star`}
-                                            onClick={(e) => toggleImportant(e, chat.id)}
-                                            style={{ cursor: 'pointer', fontSize: '0.8rem' }}
-                                        ></i>
-                                        {chat.unread_count > 0 && (
-                                            <span className="badge rounded-pill bg-danger" style={{ fontSize: '0.65rem' }}>
-                                                {chat.unread_count}
-                                            </span>
+                                        <div className="d-flex flex-column align-items-end ms-2" style={{ minWidth: '60px' }}>
+                                            <div className="d-flex align-items-center gap-1 mb-1">
+                                                <i
+                                                    className={`fa-${importantUsers.includes(chat.id) ? 'solid text-warning' : 'regular'} fa-star`}
+                                                    onClick={(e) => toggleImportant(e, chat.id)}
+                                                    style={{ cursor: 'pointer', fontSize: '0.82rem', opacity: importantUsers.includes(chat.id) ? 1 : 0.7 }}
+                                                ></i>
+                                                {chat.unread_count > 0 && (
+                                                    <span className="badge rounded-pill chat-unread-badge">
+                                                        {chat.unread_count}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            {chat.last_message_time && (
+                                                <div className="chat-contact-time">
+                                                    {new Date(chat.last_message_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {currentUserId == 1 && chat?.group_name && (
+                                            <Button variant="link" className="text-danger p-0 ms-2" onClick={(e) => {
+                                                e.stopPropagation();
+                                                deleteGroup(chat.id);
+                                            }}>
+                                                <i className="fa-solid fa-trash-can"></i>
+                                            </Button>
                                         )}
                                     </div>
-                                    {chat.last_message_time && (
-                                        <div className={`small ${selectedChat?.id === chat.id ? 'text-white-50' : 'text-muted'}`} style={{ fontSize: '0.65rem' }}>
-                                            {new Date(chat.last_message_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                        </div>
-                                    )}
-                                </div>
-
-                                {currentUserId == 1 && chat?.group_name && (
-                                    <Button variant="link" className="text-danger p-0 ms-2" onClick={(e) => {
-                                        e.stopPropagation();
-                                        deleteGroup(chat.id);
-                                    }}>
-                                        <i className="fa-solid fa-trash-can"></i>
-                                    </Button>
-                                )}
-                            </div>
-                        ))}
+                                );
+                            })}
                     </div>
                 </div>
 
                 {/* Chat area */}
-                <div className="d-flex flex-column flex-grow-1 bg-white">
+                <div className="chat-main-panel">
                     {selectedChat ? (
                         <>
-                            <div className="d-flex px-4 py-3 border-bottom align-items-center justify-content-between">
+                            <div className="d-flex chat-main-header align-items-center justify-content-between">
                                 <div className="d-flex align-items-center">
-                                    <div className="fs-3 me-3">{selectedChat.type === 'user' ? '👤' : '👥'}</div>
+                                    <div className="chat-avatar-badge me-3">
+                                        {selectedChat.type === 'group'
+                                            ? <i className="fa-solid fa-users"></i>
+                                            : (selectedChat.full_name || 'U').trim().charAt(0).toUpperCase()}
+                                    </div>
                                     <div>
-                                        <h5 className="mb-0 fw-bold">
+                                        <h5 className="mb-0 chat-main-header-title">
                                             {selectedChat.type === 'group' ? selectedChat.group_name : selectedChat.full_name}
                                         </h5>
-                                        <div className="small text-muted">{selectedChat.type} • Active Now</div>
+                                        <div className="small text-muted d-flex align-items-center mt-1">
+                                            <span className="chat-status-dot"></span>
+                                            <span className="text-capitalize">{selectedChat.type}</span>&nbsp;• Active Now
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="d-flex gap-3 text-muted">
-                                    <i className="fa-solid fa-phone cursor-pointer"></i>
-                                    <i className="fa-solid fa-video cursor-pointer"></i>
-                                    <i className="fa-solid fa-circle-info cursor-pointer"></i>
+                                <div className="d-flex gap-2">
+                                    <span className="chat-header-action-btn" title="Voice Call">
+                                        <i className="fa-solid fa-phone"></i>
+                                    </span>
+                                    <span className="chat-header-action-btn" title="Video Call">
+                                        <i className="fa-solid fa-video"></i>
+                                    </span>
+                                    <span className="chat-header-action-btn" title="Conversation Info">
+                                        <i className="fa-solid fa-circle-info"></i>
+                                    </span>
                                 </div>
                             </div>
-                            <div className="flex-grow-1 overflow-auto p-4 bg-light" style={{ backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")' }}>
+                            <div className="chat-messages-canvas">
                                 {(() => {
                                     let lastDate = null;
 
@@ -1048,29 +1065,23 @@ const ChatAppLayout = () => {
                                         return (
                                             <React.Fragment key={idx}>
                                                 {isNewDate && (
-                                                    <div className="text-center my-4">
-                                                        <span className="badge bg-white text-muted shadow-sm px-3 py-2 rounded-pill border" style={{ fontSize: '0.75rem' }}>
+                                                    <div className="text-center my-3">
+                                                        <span className="chat-date-pill">
                                                             {formattedDate}
                                                         </span>
                                                     </div>
                                                 )}
                                                 <div className={`d-flex mb-3 ${isSender ? 'justify-content-end' : 'justify-content-start'}`}>
                                                     <div
-                                                        className={`p-3 rounded-4 shadow-sm ${isSender ? 'bg-primary text-white' : 'bg-white text-dark'}`}
-                                                        style={{
-                                                            maxWidth: '70%',
-                                                            minWidth: '100px',
-                                                            borderRadius: isSender ? '18px 18px 2px 18px' : '18px 18px 18px 2px',
-                                                            position: 'relative'
-                                                        }}
+                                                        className={`chat-bubble ${isSender ? 'chat-bubble-sent' : 'chat-bubble-received'}`}
                                                     >
                                                         {!isSender && selectedChat.type === 'group' && (
-                                                            <div className="fw-bold small mb-1 text-primary">{senderName}</div>
+                                                            <div className="chat-bubble-sender-name">{senderName}</div>
                                                         )}
                                                         <div style={{ wordBreak: 'break-word', fontSize: '0.95rem' }}>{msg.message}</div>
-                                                        <div className={`text-end mt-1 ${isSender ? 'text-white-50' : 'text-muted'}`} style={{ fontSize: '0.65rem' }}>
+                                                        <div className="chat-bubble-meta">
                                                             {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                                            {isSender && <i className="fa-solid fa-check-double ms-1"></i>}
+                                                            {isSender && <i className="fa-solid fa-check-double chat-check-icon"></i>}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1080,37 +1091,37 @@ const ChatAppLayout = () => {
                                 })()}
                                 <div ref={messagesEndRef} />
                             </div>
-                            <div className="p-3 bg-white border-top">
-                                <div className="d-flex align-items-center gap-2 bg-light rounded-pill px-3 py-2 border">
-                                    <i className="fa-solid fa-paperclip text-muted cursor-pointer fs-5"></i>
+                            <div className="chat-input-footer">
+                                <div className="chat-input-pill">
+                                    <i className="fa-solid fa-paperclip chat-input-icon"></i>
                                     <input
-                                        className="form-control border-0 bg-transparent shadow-none"
+                                        className="form-control shadow-none"
                                         placeholder="Type a message..."
                                         value={message}
                                         onChange={(e) => setMessage(e.target.value)}
                                         onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                                        style={{ fontSize: '0.95rem' }}
                                     />
-                                    <i className="fa-regular fa-face-smile text-muted cursor-pointer fs-5"></i>
-                                    <div 
-                                        className={`rounded-circle d-flex align-items-center justify-content-center ${!message.trim() ? 'bg-secondary' : 'bg-primary'} text-white shadow-sm`}
-                                        style={{ width: '40px', height: '40px', cursor: 'pointer', minWidth: '40px' }}
+                                    <i className="fa-regular fa-face-smile chat-input-icon"></i>
+                                    <button
+                                        type="button"
+                                        className={`chat-send-btn ${!message.trim() ? 'disabled' : ''}`}
+                                        disabled={!message.trim()}
                                         onClick={handleSendMessage}
                                     >
                                         <i className="fa-solid fa-paper-plane"></i>
-                                    </div>
+                                    </button>
                                 </div>
                             </div>
                         </>
                     ) : (
-                        <div className="d-flex justify-content-center align-items-center h-100 bg-light">
-                            <div className="text-center p-5 bg-white rounded-4 shadow-sm border" style={{ maxWidth: '400px' }}>
-                                <div className="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style={{ width: '80px', height: '80px' }}>
+                        <div className="d-flex justify-content-center align-items-center h-100 chat-empty-state">
+                            <div className="text-center chat-empty-card">
+                                <div className="chat-empty-icon mb-4">
                                     <i className="fa-regular fa-comments fs-1"></i>
                                 </div>
-                                <h3 className="fw-bold">Stay Connected</h3>
-                                <p className="text-muted">Choose a contact from the left to start a conversation or view your message history.</p>
-                                <Button variant="primary" className="rounded-pill px-4" onClick={() => setShowSidebar(true)}>
+                                <h3 className="fw-bold mb-2">Stay Connected</h3>
+                                <p className="text-muted mb-4">Choose a contact from the left to start a conversation or view your message history.</p>
+                                <Button className="chat-group-btn px-4 py-2" onClick={() => setShowSidebar(true)}>
                                     Browse Contacts
                                 </Button>
                             </div>
@@ -1120,7 +1131,7 @@ const ChatAppLayout = () => {
             </div>
 
             <Modal show={showGroupModal} onHide={() => setShowGroupModal(false)} centered>
-                <Modal.Header closeButton className="bg-light">
+                <Modal.Header closeButton>
                     <Modal.Title className="fw-bold">Create New Group</Modal.Title>
                 </Modal.Header>
                 <Modal.Body className="p-4">
@@ -1148,9 +1159,9 @@ const ChatAppLayout = () => {
                         </Form.Group>
                     </Form>
                 </Modal.Body>
-                <Modal.Footer className="bg-light border-0">
-                    <Button variant="light" onClick={() => setShowGroupModal(false)} className="rounded-pill px-4">Cancel</Button>
-                    <Button variant="primary" onClick={handleCreateGroup} className="rounded-pill px-4">Create Group</Button>
+                <Modal.Footer className="border-0">
+                    <Button variant="secondary" onClick={() => setShowGroupModal(false)} className="rounded-pill px-4">Cancel</Button>
+                    <Button className="chat-group-btn px-4" onClick={handleCreateGroup}>Create Group</Button>
                 </Modal.Footer>
             </Modal>
         </div>

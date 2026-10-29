@@ -127,18 +127,55 @@ h1, h2, h3, h4, h5, h6 {
   color: #ffffff;
 }
 
+/* ---- AMBIENT SHADOW-STYLE LANDING PAGE BACKDROP ---- */
+.landing-shadow-bg {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.landing-shadow-photo-primary {
+  position: absolute;
+  inset: -4%;
+  background: url('/img/study_abroad_bg.jpg') center center / cover no-repeat;
+  opacity: 0.22;
+  filter: contrast(1.08) brightness(0.82) saturate(1.1);
+}
+
+.landing-shadow-photo-silhouette {
+  position: absolute;
+  inset: 0;
+  background: url('/img/study_abroad_bg.jpg') center bottom / cover no-repeat;
+  opacity: 0.25;
+  mix-blend-mode: screen;
+  filter: contrast(1.2) saturate(1.15);
+}
+
+.landing-shadow-vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 60% 35%, rgba(16, 185, 129, 0.1) 0%, rgba(8, 12, 9, 0.55) 60%, rgba(5, 9, 7, 0.78) 100%);
+  box-shadow: none;
+}
+
 /* ---- HERO SECTION ---- */
 .hero-section {
-  min-height: 65vh;
+  min-height: 88vh;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-top: 100px;
-  padding-bottom: 50px;
+  padding-top: 115px;
+  padding-bottom: 55px;
   overflow: hidden;
-  background: radial-gradient(circle at 25% 30%, #0e2216 0%, #080c09 70%);
+  background: #080c09;
   text-align: left;
+  z-index: 1;
 }
 
 .hero-video-bg {
@@ -147,11 +184,20 @@ h1, h2, h3, h4, h5, h6 {
   left: 0;
   width: 100%;
   height: 100%;
-  background: url('/img/airplane_hero.jpg') center/cover no-repeat;
-  opacity: 0.28;
-  filter: saturate(1.2);
+  background: url('/img/landing_hero_campus.jpg') center top / cover no-repeat;
+  opacity: 0.92;
+  filter: contrast(1.04) brightness(0.94) saturate(1.08);
   z-index: 1;
-  animation: slowZoom 25s infinite alternate ease-in-out;
+}
+
+.hero-shadow-silhouette {
+  position: absolute;
+  inset: 0;
+  background: url('/img/study_abroad_bg.jpg') center bottom / cover no-repeat;
+  opacity: 0.08;
+  mix-blend-mode: lighten;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .hero-overlay {
@@ -160,8 +206,18 @@ h1, h2, h3, h4, h5, h6 {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to top, #080c09 0%, rgba(8, 12, 9, 0.85) 50%, transparent 100%);
+  background:
+    radial-gradient(ellipse 46% 60% at 20% 52%, rgba(6, 12, 9, 0.65) 0%, rgba(6, 12, 9, 0.28) 55%, transparent 100%),
+    linear-gradient(to top, rgba(8, 12, 9, 0.65) 0%, transparent 18%);
   z-index: 2;
+}
+
+.hero-inline-plane {
+  display: inline-block;
+  font-size: 0.62em;
+  margin-left: 0.2rem;
+  vertical-align: middle;
+  filter: drop-shadow(0 4px 10px rgba(16, 185, 129, 0.35));
 }
 
 .hero-content {
@@ -265,11 +321,72 @@ h1, h2, h3, h4, h5, h6 {
   border-color: #34d399 !important;
 }
 
+/* Hero Bottom Feature Trust Bar */
+.hero-trust-bar {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-top: 2.25rem;
+  padding: 0.85rem 1.35rem;
+  border-radius: 18px;
+  background: rgba(8, 14, 10, 0.62);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(16, 185, 129, 0.22);
+}
+
+.hero-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.hero-trust-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(16, 185, 129, 0.16);
+  color: #10b981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+}
+
+.hero-trust-text {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #e2e8f0;
+}
+
+.hero-trust-divider {
+  width: 1px;
+  height: 28px;
+  background: rgba(148, 163, 184, 0.3);
+}
+
 /* Custom Hero Stats Grid */
 .hero-stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
+}
+
+.stat-icon-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .stat-card-large {
@@ -294,8 +411,8 @@ h1, h2, h3, h4, h5, h6 {
   backdrop-filter: blur(20px);
   border: 1px solid rgba(16, 185, 129, 0.15);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-  border-radius: 24px;
-  padding: 2rem;
+  border-radius: 20px;
+  padding: 1.25rem 1.5rem;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -421,17 +538,46 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
 }
 
+/* ---- CONTEXTUAL SECTION BACKGROUNDS (SERVICES, UNIVERSITIES, COURSES) ---- */
+.landing-section-services {
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(180deg, rgba(8, 12, 9, 0.65) 0%, rgba(10, 18, 13, 0.58) 50%, rgba(8, 12, 9, 0.68) 100%);
+  border-top: 1px solid rgba(16, 185, 129, 0.12);
+}
+
+.landing-section-universities {
+  position: relative;
+  z-index: 2;
+  background:
+    radial-gradient(circle at 80% 25%, rgba(16, 185, 129, 0.10) 0%, transparent 55%),
+    linear-gradient(180deg, rgba(8, 12, 9, 0.65) 0%, rgba(9, 16, 12, 0.55) 50%, rgba(8, 12, 9, 0.68) 100%);
+  border-top: 1px solid rgba(16, 185, 129, 0.12);
+}
+
+.landing-section-courses {
+  position: relative;
+  z-index: 2;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(16, 185, 129, 0.10) 0%, transparent 55%),
+    linear-gradient(180deg, rgba(8, 12, 9, 0.65) 0%, rgba(10, 17, 13, 0.58) 50%, rgba(8, 12, 9, 0.68) 100%);
+  border-top: 1px solid rgba(16, 185, 129, 0.12);
+}
+
 /* ---- OFFER SECTION ---- */
 .offer-section {
   padding: 80px 0;
-  background: #080c09;
+  background: transparent;
   position: relative;
+  z-index: 2;
 }
 
 .offer-overlay {
-  background: rgba(13, 20, 16, 0.6);
-  border-top: 1px solid rgba(16, 185, 129, 0.15);
-  border-bottom: 1px solid rgba(16, 185, 129, 0.15);
+  background: rgba(13, 20, 16, 0.62);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(16, 185, 129, 0.18);
+  border-bottom: 1px solid rgba(16, 185, 129, 0.18);
   padding: 60px 0;
 }
 
@@ -502,10 +648,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Footer */
-footer {
-  background-color: #050806 !important;
-  border-top: 1px solid rgba(16, 185, 129, 0.15);
+footer,
+.landing-footer {
+  background: rgba(5, 8, 6, 0.78) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(16, 185, 129, 0.18);
   color: #94a3b8 !important;
+  z-index: 2;
 }
 
 /* Animations */
@@ -773,12 +923,65 @@ body.light-theme .nav-link-hover:hover {
   color: #059669 !important;
 }
 
+body.light-theme .landing-shadow-photo-primary {
+  opacity: 0.14 !important;
+  filter: brightness(1.35) contrast(0.9) saturate(0.85) !important;
+  animation: none !important;
+}
+
+body.light-theme .landing-shadow-photo-silhouette {
+  opacity: 0 !important;
+}
+
+body.light-theme .landing-shadow-vignette {
+  background:
+    linear-gradient(180deg, rgba(248, 250, 252, 0.32) 0%, rgba(248, 250, 252, 0.42) 100%) !important;
+  box-shadow: none !important;
+}
+
 body.light-theme .hero-section {
-  background: radial-gradient(circle at 25% 30%, #ecfdf5 0%, #f8fafc 75%) !important;
+  background: transparent !important;
+}
+
+body.light-theme .hero-video-bg {
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+body.light-theme .hero-shadow-silhouette {
+  opacity: 0 !important;
 }
 
 body.light-theme .hero-overlay {
-  background: linear-gradient(to top, #f8fafc 0%, rgba(248, 250, 252, 0.85) 50%, transparent 100%) !important;
+  background:
+    radial-gradient(ellipse 38% 48% at 18% 52%, rgba(255, 255, 255, 0.28) 0%, transparent 100%) !important;
+  box-shadow: none !important;
+}
+
+body.light-theme .hero-trust-bar {
+  background: rgba(255, 255, 255, 0.82) !important;
+  border: 1px solid rgba(16, 185, 129, 0.22) !important;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06) !important;
+}
+
+body.light-theme .hero-trust-text {
+  color: #1e293b !important;
+}
+
+body.light-theme .hero-trust-divider {
+  background: rgba(15, 23, 42, 0.15) !important;
+}
+
+body.light-theme .hover-fill {
+  background: rgba(236, 253, 245, 0.92) !important;
+  border: 1px solid rgba(16, 185, 129, 0.35) !important;
+  color: #059669 !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.12) !important;
+}
+
+body.light-theme .hover-fill:hover {
+  background: #10b981 !important;
+  color: #ffffff !important;
 }
 
 body.light-theme .hero-title {
@@ -892,13 +1095,31 @@ body.light-theme .university-contact-item {
   color: #475569 !important;
 }
 
+/* Contextual Section Backgrounds in Light Mode (Single fixed backdrop shows through without duplicate images) */
+body.light-theme .landing-section-services {
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.35) 0%, rgba(236, 253, 245, 0.28) 50%, rgba(248, 250, 252, 0.35) 100%) !important;
+  border-top: 1px solid rgba(16, 185, 129, 0.18);
+}
+
+body.light-theme .landing-section-universities {
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.35) 0%, rgba(240, 253, 244, 0.28) 50%, rgba(248, 250, 252, 0.35) 100%) !important;
+  border-top: 1px solid rgba(16, 185, 129, 0.18);
+}
+
+body.light-theme .landing-section-courses {
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.35) 0%, rgba(240, 249, 255, 0.28) 50%, rgba(248, 250, 252, 0.35) 100%) !important;
+  border-top: 1px solid rgba(16, 185, 129, 0.18);
+}
+
 body.light-theme .offer-section {
-  background: #f1f5f9 !important;
+  background: transparent !important;
 }
 
 body.light-theme .offer-overlay {
-  background: rgba(255, 255, 255, 0.8) !important;
-  border-color: rgba(16, 185, 129, 0.2) !important;
+  background: rgba(255, 255, 255, 0.68) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border-color: rgba(16, 185, 129, 0.25) !important;
 }
 
 body.light-theme .offer-title {
@@ -906,23 +1127,44 @@ body.light-theme .offer-title {
 }
 
 body.light-theme .offer-description {
-  color: #475569 !important;
+  color: #1e293b !important;
+  font-weight: 500;
 }
 
 body.light-theme .newsletter-input {
   background: #ffffff !important;
-  border-color: rgba(16, 185, 129, 0.3) !important;
+  border-color: rgba(16, 185, 129, 0.35) !important;
   color: #0f172a !important;
 }
 
-body.light-theme footer {
-  background-color: #f1f5f9 !important;
-  border-top-color: rgba(16, 185, 129, 0.2) !important;
-  color: #475569 !important;
+body.light-theme footer,
+body.light-theme .landing-footer {
+  background: rgba(248, 250, 252, 0.78) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border-top-color: rgba(16, 185, 129, 0.25) !important;
+  color: #1e293b !important;
 }
 
 body.light-theme footer h5,
 body.light-theme footer h6 {
+  color: #0f172a !important;
+}
+
+body.light-theme .modal-content {
+  background-color: #ffffff !important;
+  background-image:
+    radial-gradient(circle at 90% 10%, rgba(16, 185, 129, 0.06) 0%, transparent 45%),
+    radial-gradient(circle at 10% 90%, rgba(56, 189, 248, 0.05) 0%, transparent 45%) !important;
+  border: 1px solid rgba(16, 185, 129, 0.25) !important;
+  color: #0f172a !important;
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.18) !important;
+}
+
+body.light-theme .modal-header,
+body.light-theme .modal-footer {
+  background-color: #f8fafc !important;
+  border-color: rgba(16, 185, 129, 0.18) !important;
   color: #0f172a !important;
 }
 
@@ -938,6 +1180,10 @@ body.light-theme footer h6 {
 
 .modal {
   z-index: 100005 !important;
+}
+
+.swal2-container {
+  z-index: 200000 !important;
 }
 
 .inquiry-custom-modal .modal-dialog {
@@ -1059,4 +1305,576 @@ body.light-theme .inquiry-custom-modal .modal-body {
 
 body.light-theme .inquiry-custom-modal .modal-title {
   color: #0f172a !important;
+}
+
+/* ======================================================================
+   FULL MULTI-DEVICE RESPONSIVE SYSTEM
+   (Mobile <= 480px / 767px | Tablet 768-991px | Laptop 992-1440px | Large Laptop >= 1441px)
+   ====================================================================== */
+
+/* High-contrast Call Consultant button across all screens */
+.hover-fill {
+  background: rgba(8, 16, 12, 0.88) !important;
+  border: 1.5px solid #10b981 !important;
+  color: #34d399 !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45) !important;
+}
+
+body.light-theme .hover-fill {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1.5px solid #10b981 !important;
+  color: #059669 !important;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08) !important;
+}
+
+body.light-theme .flight-visa-pill {
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: #d97706 !important;
+  border-color: rgba(217, 119, 6, 0.4) !important;
+}
+
+/* Hamburger Icon Visibility Fix (Dark & Light Mode) */
+.navbarHome .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2852, 211, 153, 0.95%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2.5' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+body.light-theme .navbarHome .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%285, 150, 105, 0.95%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2.5' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+/* 1. BADA LAPTOP & LARGE MONITORS (1441px and above) */
+@media (min-width: 1441px) {
+  .navbarHome .container {
+    max-width: 1420px !important;
+    padding: 0.7rem 2.25rem !important;
+  }
+
+  .hero-content,
+  .landing-inner-container,
+  .university-cards-section {
+    max-width: 1420px !important;
+  }
+
+  .hero-section {
+    min-height: 90vh;
+    padding-top: 125px;
+    padding-bottom: 65px;
+  }
+
+  .hero-title {
+    font-size: clamp(3.5rem, 4.3vw, 5.1rem);
+  }
+
+  .hero-subtitle {
+    font-size: 1.15rem;
+    max-width: 640px;
+  }
+
+  .airplane-card-img {
+    height: 310px;
+  }
+
+  .stat-card-small {
+    padding: 1.35rem 1.6rem;
+  }
+}
+
+/* Ultra-Wide / 1700px+ Bada Laptop & Desktop */
+@media (min-width: 1700px) {
+  .navbarHome .container {
+    max-width: 1580px !important;
+  }
+
+  .hero-content,
+  .landing-inner-container,
+  .university-cards-section {
+    max-width: 1580px !important;
+  }
+
+  .airplane-card-img {
+    height: 340px;
+  }
+}
+
+/* 2. STANDARD LAPTOP (992px to 1440px — e.g. 1366x768, 1440x900, 1536x864) */
+@media (min-width: 992px) and (max-width: 1440px) {
+  .navbarHome .container {
+    max-width: 96% !important;
+    padding: 0.55rem 1.4rem !important;
+  }
+
+  .navbar-actions-group .nav-action-btn {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    font-size: 0.88rem !important;
+  }
+
+  .hero-section {
+    min-height: 88vh;
+    padding-top: 102px;
+    padding-bottom: 42px;
+  }
+
+  .hero-content {
+    max-width: 1260px;
+    padding: 0 1.5rem;
+  }
+
+  .hero-badge {
+    margin-bottom: 1rem;
+    padding: 0.32rem 0.9rem;
+  }
+
+  .hero-title {
+    font-size: clamp(2.65rem, 3.8vw, 4rem);
+    line-height: 1.08;
+    margin-bottom: 1.1rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+    max-width: 540px;
+    margin-bottom: 1.65rem;
+  }
+
+  .pulse-button,
+  .hover-fill {
+    padding: 0.65rem 1.5rem !important;
+    font-size: 0.95rem !important;
+  }
+
+  .hero-trust-bar {
+    margin-top: 1.5rem;
+    padding: 0.7rem 1.1rem;
+    gap: 0.9rem;
+  }
+
+  .airplane-card-img {
+    height: 235px;
+  }
+
+  .airplane-card-overlay {
+    padding: 16px 20px;
+  }
+
+  .stat-card-small {
+    padding: 0.95rem 1.15rem;
+  }
+
+  .stat-icon-box {
+    width: 34px;
+    height: 34px;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-value {
+    font-size: clamp(1.55rem, 2.2vw, 1.95rem);
+  }
+}
+
+/* 3. TABLET & SMALL LAPTOP (max-width: 991px) */
+@media (max-width: 991px) {
+  .navbarHome {
+    padding: 0.55rem 0.75rem !important;
+  }
+
+  .navbarHome .container {
+    border-radius: 22px !important;
+    padding: 0.55rem 1rem !important;
+    max-width: 100% !important;
+  }
+
+  .navbarHome .navbar-toggler {
+    border: 1.5px solid rgba(16, 185, 129, 0.55) !important;
+    border-radius: 12px !important;
+    padding: 0.38rem 0.6rem !important;
+    background: rgba(16, 185, 129, 0.14) !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  body.light-theme .navbar-collapse {
+    background: rgba(255, 255, 255, 0.98) !important;
+    border: 1px solid rgba(16, 185, 129, 0.28) !important;
+    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.12) !important;
+  }
+
+  .navbar-collapse .navbar-nav {
+    text-align: center;
+    padding-bottom: 0.5rem;
+  }
+
+  .navbar-actions-group {
+    justify-content: center;
+    width: 100%;
+    padding-top: 0.75rem;
+    margin-top: 0.5rem;
+    border-top: 1px solid rgba(16, 185, 129, 0.18);
+  }
+
+  .hero-section {
+    min-height: auto;
+    padding-top: 98px;
+    padding-bottom: 45px;
+    text-align: center;
+  }
+
+  .hero-video-bg {
+    background-position: 62% top !important;
+  }
+
+  .hero-overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(6, 12, 9, 0.78) 0%,
+      rgba(6, 12, 9, 0.58) 45%,
+      rgba(6, 12, 9, 0.84) 100%
+    ) !important;
+  }
+
+  body.light-theme .hero-overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.76) 0%,
+      rgba(255, 255, 255, 0.52) 45%,
+      rgba(248, 250, 252, 0.8) 100%
+    ) !important;
+  }
+
+  .hero-subtitle {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-buttons {
+    justify-content: center;
+  }
+
+  .hero-trust-bar {
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .airplane-card-showcase {
+    max-width: 620px;
+    margin-left: auto;
+    margin-right: auto;
+    animation: none !important;
+  }
+
+  .airplane-card-img {
+    height: 260px;
+  }
+
+  .hero-stats-grid {
+    max-width: 620px;
+    margin: 0.85rem auto 0;
+    text-align: left;
+  }
+}
+
+/* 4. MOBILE PHONES (max-width: 767px) */
+@media (max-width: 767px) {
+  .navbar-brand-logo {
+    height: 36px !important;
+  }
+
+  .navbarHome .brand-text span:first-child {
+    font-size: 1.25rem !important;
+  }
+
+  .hero-section {
+    padding-top: 88px;
+    padding-bottom: 36px;
+  }
+
+  .hero-content {
+    padding: 0 0.9rem;
+  }
+
+  .hero-badge {
+    padding: 0.35rem 0.75rem;
+    margin-bottom: 0.85rem;
+    max-width: 100%;
+    background: rgba(8, 16, 12, 0.85) !important;
+  }
+
+  body.light-theme .hero-badge {
+    background: rgba(255, 255, 255, 0.92) !important;
+  }
+
+  .hero-badge-text {
+    font-size: 0.62rem;
+    letter-spacing: 0.04em;
+    white-space: normal;
+    line-height: 1.3;
+  }
+
+  .hero-title {
+    font-size: clamp(1.95rem, 7.8vw, 2.55rem);
+    line-height: 1.12;
+    margin-bottom: 0.85rem;
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.65);
+  }
+
+  body.light-theme .hero-title {
+    text-shadow: 0 2px 12px rgba(255, 255, 255, 0.95);
+  }
+
+  .hero-subtitle {
+    font-size: 0.92rem;
+    line-height: 1.5;
+    margin-bottom: 1.25rem;
+    color: #e2e8f0;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.75);
+  }
+
+  body.light-theme .hero-subtitle {
+    color: #1e293b !important;
+    text-shadow: 0 1px 8px rgba(255, 255, 255, 0.95);
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.65rem !important;
+  }
+
+  .hero-buttons .btn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.75rem 1.2rem !important;
+    font-size: 0.96rem !important;
+  }
+
+  /* 3-Column Symmetric Trust Bar on Mobile (No empty space on right!) */
+  .hero-trust-bar {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+    padding: 0.85rem 0.6rem !important;
+    margin-top: 1.15rem !important;
+    background: rgba(8, 14, 10, 0.86) !important;
+  }
+
+  body.light-theme .hero-trust-bar {
+    background: rgba(255, 255, 255, 0.92) !important;
+  }
+
+  .hero-trust-item {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 0.4rem !important;
+  }
+
+  .hero-trust-icon {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 0.9rem !important;
+  }
+
+  .hero-trust-text {
+    font-size: 0.68rem !important;
+    line-height: 1.2 !important;
+    align-items: center !important;
+  }
+
+  .hero-trust-divider {
+    display: none !important;
+  }
+
+  /* Airplane Showcase Card on Mobile */
+  .airplane-card-showcase {
+    border-radius: 18px;
+  }
+
+  .airplane-card-img {
+    height: 205px;
+  }
+
+  .airplane-card-overlay {
+    padding: 12px 12px;
+    background: linear-gradient(
+      to top,
+      rgba(8, 12, 9, 0.96) 0%,
+      rgba(8, 12, 9, 0.55) 55%,
+      transparent 100%
+    ) !important;
+  }
+
+  .flight-badges-row {
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .flight-status-badge {
+    font-size: 0.58rem !important;
+    padding: 4px 8px !important;
+    white-space: nowrap !important;
+    margin-bottom: 0 !important;
+    gap: 5px !important;
+  }
+
+  .flight-live-dot {
+    width: 6px !important;
+    height: 6px !important;
+  }
+
+  .flight-visa-pill {
+    font-size: 0.6rem !important;
+    padding: 4px 8px !important;
+    white-space: nowrap !important;
+  }
+
+  .flight-route-display {
+    padding: 8px 12px;
+    margin-top: 4px;
+    border-radius: 12px;
+  }
+
+  .route-city-code {
+    font-size: 0.92rem;
+  }
+
+  .route-city-name {
+    font-size: 0.62rem;
+  }
+
+  .route-flight-track {
+    margin: 0 10px;
+  }
+
+  /* 2x2 Stats Grid on Mobile */
+  .hero-stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.65rem;
+  }
+
+  .stat-card-small {
+    padding: 0.9rem 1rem;
+    border-radius: 16px;
+    background: rgba(13, 20, 16, 0.88) !important;
+  }
+
+  body.light-theme .stat-card-small {
+    background: rgba(255, 255, 255, 0.95) !important;
+  }
+
+  .stat-icon-box {
+    width: 32px;
+    height: 32px;
+    font-size: 0.88rem;
+    margin-bottom: 0.45rem;
+  }
+
+  .stat-value {
+    font-size: 1.4rem;
+  }
+
+  .stat-label {
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+  }
+
+  #services.landing-inner-container,
+  #courses.landing-inner-container,
+  .university-cards-section {
+    padding: 42px 14px !important;
+  }
+
+  .service-card {
+    padding: 20px !important;
+  }
+
+  .offer-section {
+    padding: 32px 0;
+  }
+
+  .offer-overlay {
+    padding: 36px 12px;
+  }
+
+  .offer-title {
+    font-size: clamp(1.55rem, 6.2vw, 2.05rem);
+  }
+
+  .offer-description {
+    font-size: 0.92rem;
+  }
+
+  .offer-section .input-group {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .offer-section .newsletter-input {
+    border-radius: 50px !important;
+    width: 100% !important;
+    text-align: center;
+    padding: 12px 18px !important;
+  }
+
+  .offer-section .subscribe-btn {
+    border-radius: 50px !important;
+    width: 100% !important;
+    padding: 12px 22px !important;
+  }
+
+  .offer-features {
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    font-size: 0.84rem;
+  }
+
+  .footer-main-container {
+    padding: 36px 16px 22px !important;
+  }
+
+  .footer-bottom-bar {
+    flex-direction: column;
+    justify-content: center !important;
+    text-align: center;
+    margin-top: 28px !important;
+  }
+
+  .inquiry-custom-modal .modal-dialog {
+    margin: 0.5rem auto !important;
+    padding: 0 8px;
+  }
+
+  .inquiry-custom-modal .modal-header {
+    padding: 0.85rem 1.1rem !important;
+  }
+
+  .inquiry-custom-modal .modal-body {
+    padding: 1rem !important;
+    max-height: 78vh;
+  }
+}
+
+/* 5. SMALL MOBILE PHONES (max-width: 480px) */
+@media (max-width: 480px) {
+  .navbar-actions-group {
+    display: grid !important;
+    grid-template-columns: auto 1fr;
+    gap: 0.5rem !important;
+  }
+
+  .navbar-actions-group .nav-action-btn {
+    width: 100%;
+    font-size: 0.82rem !important;
+    padding: 0.5rem 0.7rem !important;
+  }
+
+  .navbar-actions-group .nav-action-btn:last-child {
+    grid-column: span 2;
+  }
+
+  .offer-section iframe {
+    transform: scale(0.88);
+    transform-origin: center;
+  }
 }

@@ -107,11 +107,7 @@ export const getFollowUpHistoryByInquiryId = async (req, res) => {
       [inquiry_id]
     );
 
-    if (rows.length === 0) {
-      return res.status(404).json({ message: "No follow-up history found for this inquiry_id" });
-    }
-
-    res.status(200).json(rows);
+    return res.status(200).json(rows || []);
   } catch (error) {
     console.error("Error fetching follow-up history:", error);
     res.status(500).json({ message: "Internal server error" });

@@ -63,6 +63,9 @@ const Inquiry = ({ inq }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [phoneError, setPhoneError] = useState(""); // New state for phone error
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const isSubmittingRef = useRef(false);
+  const phoneCheckTimerRef = useRef(null);
   const [isEditMode, setIsEditMode] = useState(false); // Track if we're editing
   const [editingInquiryId, setEditingInquiryId] = useState(null); // ID of inquiry being edited
   const [showAssignStaffModal, setShowAssignStaffModal] = useState(false);
@@ -308,31 +311,21 @@ const Inquiry = ({ inq }) => {
 
         setCouncolerId(userId);
 
-        const staffInfo = await fetchStaffById(userId);
-
-        if (staffInfo) {
-          console.log("Staff info fetched:", staffInfo);
-          setStaffData(staffInfo);
-
-          if (staffInfo.branch) {
-            const branch = staffInfo.branch;
-            console.log("Setting user branch to:", branch);
-            setUserBranch(branch);
-
-            if (role !== "admin") {
-              setFilters((prev) => ({ ...prev, Branch: branch }));
-            }
-          } else {
-            console.warn("Branch not set for staff, using default 'Sylhet'");
-            setUserBranch("Sylhet");
-            if (role !== "admin") {
+        if (role === "admin") {
+          setUserBranch("Sylhet");
+        } else {
+          const staffInfo = await fetchStaffById(userId);
+          if (staffInfo) {
+            setStaffData(staffInfo);
+            if (staffInfo.branch) {
+              setUserBranch(staffInfo.branch);
+              setFilters((prev) => ({ ...prev, Branch: staffInfo.branch }));
+            } else {
+              setUserBranch("Sylhet");
               setFilters((prev) => ({ ...prev, Branch: "Sylhet" }));
             }
-          }
-        } else {
-          setError("Staff data not found. Using default settings.");
-          setUserBranch("Sylhet");
-          if (role !== "admin") {
+          } else {
+            setUserBranch("Sylhet");
             setFilters((prev) => ({ ...prev, Branch: "Sylhet" }));
           }
         }
@@ -605,47 +598,46 @@ const Inquiry = ({ inq }) => {
     try {
       const response = await api.get(`${BASE_URL}inquiries/check-phone?phone=${encodeURIComponent(phoneNumber)}`);
       const data = response.data;
-
-      // If checking for edit mode and we have an excludeId
-      if (excludeId && data.exists) {
-        // Check if the duplicate is the same inquiry (self-check)
-        return data.inquiryId !== excludeId;
+      if (excludeId && data?.exists) {
+        return Number(data.inquiryId) !== Number(excludeId);
       }
-
-      return data.exists;
+      return Boolean(data?.exists);
     } catch (error) {
-      console.error("Error checking phone number:", error);
       return false;
     }
   };
 
   // Handle input changes for new inquiry
-  const handleInquiryInputChange = async (e) => {
+  const handleInquiryInputChange = (e) => {
     const { name, value } = e.target;
 
-    // If the phone field is being changed, check for duplicates
     if (name === 'phone') {
-      setNewInquiry({
-        ...newInquiry,
+      setNewInquiry((prev) => ({
+        ...prev,
         [name]: value,
-      });
+      }));
+      setPhoneError("");
 
-      // Only check for duplicates if the phone number is not empty
-      if (value.trim() !== '') {
-        const isDuplicate = await checkDuplicatePhone(value, isEditMode ? editingInquiryId : null);
-        if (isDuplicate) {
-          setPhoneError("This phone number already exists in our system.");
-        } else {
-          setPhoneError("");
-        }
-      } else {
-        setPhoneError("");
+      if (phoneCheckTimerRef.current) {
+        clearTimeout(phoneCheckTimerRef.current);
+      }
+
+      if (value.trim().length >= 5) {
+        const currentEditId = isEditMode ? editingInquiryId : null;
+        phoneCheckTimerRef.current = setTimeout(async () => {
+          const isDuplicate = await checkDuplicatePhone(value.trim(), currentEditId);
+          if (isDuplicate) {
+            setPhoneError("This phone number already exists in our system.");
+          } else {
+            setPhoneError("");
+          }
+        }, 350);
       }
     } else {
-      setNewInquiry({
-        ...newInquiry,
+      setNewInquiry((prev) => ({
+        ...prev,
         [name]: value,
-      });
+      }));
     }
   };
 
@@ -872,23 +864,28 @@ const Inquiry = ({ inq }) => {
       created_by: user_id,
     };
 
+    if (isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
+    setIsSubmitting(true);
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+
     try {
       const response = await api.put(`${BASE_URL}inquiries/${editingInquiryId}`, requestData);
       if (response.status === 200) {
+        handleCloseInquiryModal();
+        fetchInquiries();
         Swal.fire({
           title: "Success!",
           text: "Inquiry updated successfully.",
           icon: "success",
           confirmButtonText: "Ok",
-        }).then(() => {
-          handleCloseInquiryModal();
-          fetchInquiries();
         });
       }
     } catch (error) {
       console.error("Error during inquiry update:", error);
 
-      // Check if error is due to duplicate phone number
       if (error.response && error.response.status === 400 &&
         error.response.data && error.response.data.message &&
         error.response.data.message.includes("phone number already exists")) {
@@ -907,11 +904,15 @@ const Inquiry = ({ inq }) => {
           confirmButtonText: "Close",
         });
       }
+    } finally {
+      isSubmittingRef.current = false;
+      setIsSubmitting(false);
     }
   };
 
   const handleAddInquiry = async (e) => {
     e.preventDefault();
+    if (isSubmittingRef.current) return;
 
     // Check if phone number is duplicated before submitting
     if (phoneError) {
@@ -922,6 +923,12 @@ const Inquiry = ({ inq }) => {
         confirmButtonText: "Close",
       });
       return;
+    }
+
+    isSubmittingRef.current = true;
+    setIsSubmitting(true);
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
     }
 
     // Set test_name based on testType
@@ -991,31 +998,28 @@ const Inquiry = ({ inq }) => {
             console.error("Failed to force update status:", err);
           }
         }
+        handleCloseInquiryModal();
+        fetchInquiries();
         Swal.fire({
           title: "Success!",
           text: "Inquiry submitted successfully.",
           icon: "success",
           confirmButtonText: "Ok",
-        }).then(() => {
-          handleCloseInquiryModal();
-          fetchInquiries();
         });
       } else {
+        handleCloseInquiryModal();
+        setCurrentPage(1);
+        fetchInquiries();
         Swal.fire({
           title: "Success!",
           text: "Inquiry added successfully.",
           icon: "success",
           confirmButtonText: "Ok",
-        }).then(() => {
-          handleCloseInquiryModal();
-          setCurrentPage(1);
-          fetchInquiries();
         });
       }
     } catch (error) {
       console.error("Error during inquiry submission:", error);
 
-      // Check if error is due to duplicate phone number
       if (error.response && error.response.status === 400 &&
         error.response.data && error.response.data.message &&
         error.response.data.message.includes("phone number already exists")) {
@@ -1034,6 +1038,9 @@ const Inquiry = ({ inq }) => {
           confirmButtonText: "Close",
         });
       }
+    } finally {
+      isSubmittingRef.current = false;
+      setIsSubmitting(false);
     }
   };
 
@@ -2961,8 +2968,8 @@ Study First Info Team`
               >
                 Cancel
               </Button>
-              <Button variant="secondary" type="submit">
-                {isEditMode ? "Update Inquiry" : "Submit Inquiry"}
+              <Button variant="secondary" type="submit" disabled={isSubmitting || !!phoneError}>
+                {isSubmitting ? "Submitting..." : isEditMode ? "Update Inquiry" : "Submit Inquiry"}
               </Button>
             </div>
           </Form>

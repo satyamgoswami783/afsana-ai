@@ -1,19 +1,49 @@
-/* Modern Sidebar Styling - Premium Edition */
+/* Modern Sidebar Styling - Luxury Emerald & Gold Edition */
 
 .sidebar-container {
   width: 270px;
-  height: 100vh;
+  height: calc(100vh - 85px);
   overflow-y: auto;
-  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s ease;
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
   margin-top: 85px;
   z-index: 999;
   position: fixed;
   top: 0;
   left: 0;
   background-color: #ffffff !important;
-  border-right: 1px solid #eef2f6 !important;
-  box-shadow: 2px 0 16px rgba(15, 23, 42, 0.03) !important;
+  border-right: 1px solid rgba(16, 185, 129, 0.2) !important;
+  box-shadow: 2px 0 18px rgba(15, 23, 42, 0.04) !important;
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+body.dark-theme .sidebar-container {
+  background: linear-gradient(180deg, #0b120e 0%, #070c09 100%) !important;
+  border-right: 1px solid rgba(16, 185, 129, 0.22) !important;
+  box-shadow: 4px 0 28px rgba(0, 0, 0, 0.65) !important;
+}
+
+.sidebar-collapse-btn {
+  background: rgba(16, 185, 129, 0.08) !important;
+  border: 1px solid rgba(16, 185, 129, 0.28) !important;
+  color: #059669 !important;
+  transition: all 0.2s ease !important;
+}
+
+.sidebar-collapse-btn:hover {
+  background: rgba(16, 185, 129, 0.18) !important;
+  color: #047857 !important;
+  transform: scale(1.06);
+}
+
+body.dark-theme .sidebar-collapse-btn {
+  background: rgba(16, 185, 129, 0.12) !important;
+  border: 1px solid rgba(16, 185, 129, 0.35) !important;
+  color: #34d399 !important;
+}
+
+body.dark-theme .sidebar-collapse-btn:hover {
+  background: rgba(16, 185, 129, 0.25) !important;
+  color: #ffffff !important;
 }
 
 /* Custom sleek scrollbar */
@@ -26,12 +56,12 @@
 }
 
 .sidebar-container::-webkit-scrollbar-thumb {
-  background: rgba(203, 213, 225, 0.7);
+  background: rgba(16, 185, 129, 0.35);
   border-radius: 999px;
 }
 
 .sidebar-container::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.9);
+  background: rgba(16, 185, 129, 0.6);
 }
 
 .sidebar-menu {
@@ -64,14 +94,14 @@
 }
 
 .menu-link:hover {
-  background-color: #f8fafc !important;
-  color: #0f172a !important;
+  background-color: rgba(16, 185, 129, 0.08) !important;
+  color: #059669 !important;
   transform: translateX(3px);
 }
 
 .menu-link:hover svg,
 .menu-link:hover i {
-  color: #6366f1 !important;
+  color: #10b981 !important;
   transform: scale(1.08);
 }
 
@@ -91,24 +121,24 @@
   transition: all 0.2s ease;
 }
 
-/* Active State: Modern Indigo Gradient with Sleek Left Accent */
+/* Active State: Modern Emerald Gradient with Sleek Left Accent */
 .menu-item.active > .menu-link {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(59, 130, 246, 0.08) 100%) !important;
-  color: #4f46e5 !important;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.14) 0%, rgba(5, 150, 105, 0.08) 100%) !important;
+  color: #059669 !important;
   font-weight: 700 !important;
-  border-left: 3.5px solid #6366f1 !important;
+  border-left: 3.5px solid #10b981 !important;
   border-radius: 4px 12px 12px 4px !important;
-  box-shadow: 0 2px 10px rgba(99, 102, 241, 0.08) !important;
+  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.1) !important;
 }
 
 .menu-item.active > .menu-link .menu-text {
-  color: #4f46e5 !important;
+  color: #059669 !important;
   font-weight: 700 !important;
 }
 
 .menu-item.active > .menu-link svg,
 .menu-item.active > .menu-link i {
-  color: #4f46e5 !important;
+  color: #059669 !important;
 }
 
 /* Submenu Styling */
@@ -116,7 +146,7 @@
   list-style-type: none;
   margin: 4px 0 6px 22px !important;
   padding: 4px 0 4px 12px !important;
-  border-left: 2px solid #e2e8f0 !important;
+  border-left: 2px solid rgba(16, 185, 129, 0.25) !important;
   transition: all 0.25s ease;
 }
 
@@ -133,15 +163,15 @@
 }
 
 .submenu-item:hover {
-  color: #4f46e5 !important;
-  background-color: rgba(99, 102, 241, 0.06) !important;
+  color: #059669 !important;
+  background-color: rgba(16, 185, 129, 0.08) !important;
   transform: translateX(3px);
 }
 
 .submenu-item.active {
-  color: #4f46e5 !important;
+  color: #059669 !important;
   font-weight: 700 !important;
-  background-color: rgba(99, 102, 241, 0.1) !important;
+  background-color: rgba(16, 185, 129, 0.12) !important;
   border-radius: 8px !important;
 }
 
@@ -150,6 +180,66 @@
   font-size: 11px;
   color: #94a3b8;
   transition: transform 0.22s ease;
+}
+
+/* =========================================================
+   DARK THEME SIDEBAR STYLES
+   ========================================================= */
+body.dark-theme .menu-link {
+  color: #cbd5e1 !important;
+}
+
+body.dark-theme .menu-text {
+  color: #cbd5e1 !important;
+}
+
+body.dark-theme .menu-link svg {
+  color: #94a3b8 !important;
+}
+
+body.dark-theme .menu-link:hover {
+  background-color: rgba(16, 185, 129, 0.12) !important;
+  color: #ffffff !important;
+}
+
+body.dark-theme .menu-link:hover .menu-text {
+  color: #ffffff !important;
+}
+
+body.dark-theme .menu-link:hover svg,
+body.dark-theme .menu-link:hover i {
+  color: #34d399 !important;
+}
+
+body.dark-theme .menu-item.active > .menu-link {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.22) 0%, rgba(5, 150, 105, 0.1) 100%) !important;
+  color: #34d399 !important;
+  border-left: 3.5px solid #34d399 !important;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.16) !important;
+}
+
+body.dark-theme .menu-item.active > .menu-link .menu-text,
+body.dark-theme .menu-item.active > .menu-link svg,
+body.dark-theme .menu-item.active > .menu-link i {
+  color: #34d399 !important;
+}
+
+body.dark-theme .submenu {
+  border-left: 2px solid rgba(16, 185, 129, 0.28) !important;
+}
+
+body.dark-theme .submenu-item {
+  color: #94a3b8 !important;
+}
+
+body.dark-theme .submenu-item:hover {
+  color: #34d399 !important;
+  background-color: rgba(16, 185, 129, 0.12) !important;
+}
+
+body.dark-theme .submenu-item.active {
+  color: #34d399 !important;
+  background-color: rgba(16, 185, 129, 0.18) !important;
 }
 
 /* Collapsed Sidebar */
@@ -171,7 +261,7 @@
 .sidebar-container.collapsed .menu-item.active > .menu-link {
   border-left: none !important;
   border-radius: 12px !important;
-  background: rgba(99, 102, 241, 0.12) !important;
+  background: rgba(16, 185, 129, 0.15) !important;
 }
 
 .sidebar-container.collapsed .menu-text,

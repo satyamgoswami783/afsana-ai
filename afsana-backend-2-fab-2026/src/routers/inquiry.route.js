@@ -1,11 +1,12 @@
 import express from 'express';
 import { upload } from '../middlewares/upload.js';
 
-import {updateInquiryPriority, sendInquiryMail,  createInquiry, deleteInquiry, getAllInquiries, getInquiryById, updateInquiry, assignInquiry, bulkAssignInquiry, getInquiriesAndLeadsByCounselorId, getCounselorWisePerformance, getAllConvertedLeads, getAllleadsstatus, getCheckEligiblity, updateEligibilityStatus, updateLeadStatus , uploadDocuments, getConvertedLeadsByCounselorId, StudentAssignToProcessor} from '../controllers/inquiry.controller.js';
+import {updateInquiryPriority, sendInquiryMail,  createInquiry, deleteInquiry, getAllInquiries, getInquiryById, checkInquiryPhone, updateInquiry, assignInquiry, bulkAssignInquiry, getInquiriesAndLeadsByCounselorId, getCounselorWisePerformance, getAllConvertedLeads, getAllleadsstatus, getCheckEligiblity, updateEligibilityStatus, updateLeadStatus , uploadDocuments, getConvertedLeadsByCounselorId, StudentAssignToProcessor} from '../controllers/inquiry.controller.js';
 import { aiScoreLead, aiLeadScoreHistory } from '../controllers/ai.lead_scoring.controller.js';
 // import { authenticate } from '../middlewares/auth.middleware.js';
 const router = express.Router();
 router.post('/inquiries', createInquiry);
+router.get('/inquiries/check-phone', checkInquiryPhone);
 router.get('/inquiries/:id', getInquiryById);
 router.put('/inquiries/:id', updateInquiry);
 router.delete('/inquiries/:id', deleteInquiry);

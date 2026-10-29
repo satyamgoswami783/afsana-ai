@@ -82,11 +82,16 @@ export const createInquiry = async (req, res) => {
   try {
 
      const [checkPhone] = await db.query(
-      `SELECT id FROM inquiries WHERE phone_number = ?`,
+      `SELECT id, full_name, created_at FROM inquiries WHERE phone_number = ? ORDER BY id DESC LIMIT 1`,
       [phone_number]
     );
 
     if (checkPhone.length > 0) {
+      const existing = checkPhone[0];
+      const ageMs = existing.created_at ? (Date.now() - new Date(existing.created_at).getTime()) : Infinity;
+      if (existing.full_name === full_name && ageMs >= 0 && ageMs < 10000) {
+        return res.status(200).json({ message: "Inquiry created successfully", inquiryId: existing.id });
+      }
       return res.status(400).json({
         success: false,
         message: "This phone number already exists. Please use a different number"
@@ -1159,18 +1164,18 @@ export const getConvertedLeadsByCounselorId = async (req, res) => {
       LEFT JOIN 
         users u ON i.counselor_id = u.counselor_id
       WHERE 
-        (i.counselor_id = ? OR i.created_by = (SELECT id FROM users WHERE counselor_id = ? LIMIT 1))
-        AND (i.lead_status = 'Converted to Lead' OR i.new_leads IN (${placeholders}))
+        i.counselor_id = ?
+        OR (
+          i.created_by = (SELECT id FROM users WHERE counselor_id = ? LIMIT 1)
+          AND (i.lead_status = 'Converted to Lead' OR i.new_leads IN (${placeholders}))
+        )
+      ORDER BY i.id DESC
     `;
 
     const params = [id, id, ...allowedNewLeads];
     const [result] = await db.query(query, params);
 
-    if (result.length === 0) {
-      return res.status(404).json({ message: 'No leads found for this counselor' });
-    }
-
-    res.status(200).json(result);
+    return res.status(200).json(result || []);
   } catch (error) {
     console.error("Error fetching counselor-wise leads:", error);
     res.status(500).json({ message: 'Server error', error });
@@ -1554,3 +1559,33 @@ Study First Info Team
 
 
 
+
+
+export const checkInquiryPhone = async (req, res) => {
+  const { phone } = req.query;
+  if (!phone || !String(phone).trim()) {
+    return res.status(200).json({ exists: false, inquiryId: null, leadData: null });
+  }
+  try {
+    const cleanPhone = String(phone).trim();
+    const [rows] = await db.query(
+      `SELECT i.id, i.full_name, i.phone_number, i.lead_status, i.counselor_id, u.full_name AS counselor_name
+       FROM inquiries i
+       LEFT JOIN users u ON i.counselor_id = u.counselor_id
+       WHERE i.phone_number = ?
+       LIMIT 1`,
+      [cleanPhone]
+    );
+    if (rows.length > 0) {
+      return res.status(200).json({
+        exists: true,
+        inquiryId: rows[0].id,
+        leadData: rows[0],
+      });
+    }
+    return res.status(200).json({ exists: false, inquiryId: null, leadData: null });
+  } catch (error) {
+    console.error("Error checking phone number:", error);
+    return res.status(500).json({ exists: false, message: "Internal server error" });
+  }
+};

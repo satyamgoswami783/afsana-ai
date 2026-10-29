@@ -830,7 +830,8 @@ export const getStudentsByCounselorId = async (req, res) => {
       FROM students s
       JOIN users u ON s.id = u.student_id
       LEFT JOIN universities uni ON s.university_id = uni.id
-      WHERE s.counselor_id = ?`,
+      WHERE s.counselor_id = ?
+      ORDER BY s.id DESC`,
       [counselorId]
     );
     res.status(200).json(students);
@@ -878,6 +879,7 @@ export const getAssignedStudentsincounserdashboard = async (req, res) => {
       LEFT JOIN universities u 
         ON s.university_id = u.id
       WHERE s.counselor_id = ?
+      ORDER BY s.id DESC
       `,
       [counselor_id]
     );
@@ -993,6 +995,7 @@ export const getAllStudents = async (req, res) => {
         ON s.university_id = uni.id
       LEFT JOIN users uc
         ON s.counselor_id = uc.counselor_id
+      ORDER BY s.id DESC
     `);
     
     const result = rows.map(row => ({
@@ -1033,7 +1036,8 @@ export const updateStudent = async (req, res) => {
       full_name,
       email,
       country,
-      
+      counselor_id,
+      processor_id,
       password // optional update
     } = req.body;
 
@@ -1110,6 +1114,18 @@ export const updateStudent = async (req, res) => {
     if (documents) {
       studentUpdateFields.push('documents = ?');
       studentUpdateValues.push(documents);
+    }
+
+    if (counselor_id !== undefined) {
+      const parsedCounselorId = (counselor_id === "null" || counselor_id === "undefined" || !counselor_id || isNaN(counselor_id)) ? null : Number(counselor_id);
+      studentUpdateFields.push('counselor_id = ?');
+      studentUpdateValues.push(parsedCounselorId);
+    }
+
+    if (processor_id !== undefined) {
+      const parsedProcessorId = (processor_id === "null" || processor_id === "undefined" || !processor_id || isNaN(processor_id)) ? null : Number(processor_id);
+      studentUpdateFields.push('processor_id = ?');
+      studentUpdateValues.push(parsedProcessorId);
     }
 
     studentUpdateValues.push(studentId);

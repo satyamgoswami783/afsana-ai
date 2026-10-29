@@ -954,7 +954,7 @@ import Swal from 'sweetalert2';
 import BASE_URL from "../../Config";
 import api from "../../interceptors/axiosInterceptor";
 
-const AddLead = ({ onClose }) => {
+const AddLead = ({ onClose, onSuccess }) => {
   const [showInquiryModal, setShowInquiryModal] = useState(false);
   const [getData, setData] = useState([]);
   const [phoneError, setPhoneError] = useState(""); // Phone validation error
@@ -1346,6 +1346,7 @@ const AddLead = ({ onClose }) => {
                 icon: 'success',
                 confirmButtonText: 'Ok',
               }).then(() => {
+                if (onSuccess) onSuccess();
                 handleCloseInquiryModal(); // Close modal on success
               });
             } else {
@@ -1355,6 +1356,7 @@ const AddLead = ({ onClose }) => {
                 icon: 'warning',
                 confirmButtonText: 'Ok',
               }).then(() => {
+                if (onSuccess) onSuccess();
                 handleCloseInquiryModal(); // Close modal even on partial success
               });
             }
@@ -1366,7 +1368,8 @@ const AddLead = ({ onClose }) => {
               icon: 'warning',
               confirmButtonText: 'Ok',
             }).then(() => {
-              handleCloseInquiryModal(); // Close modal even on error
+              if (onSuccess) onSuccess();
+                handleCloseInquiryModal(); // Close modal even on error
             });
           }
         }, 500); // 500ms delay to ensure the first API call completes
@@ -2023,6 +2026,7 @@ const AddLead = ({ onClose }) => {
                 type="date"
                 name="date_of_inquiry"
                 value={newInquiry.date_of_inquiry}
+                onChange={handleInquiryInputChange}
               />
             </Form.Group>
           </Col>
@@ -2054,7 +2058,7 @@ const AddLead = ({ onClose }) => {
         </Form.Group>
 
         <div className="d-flex justify-content-end mt-4">
-          <Button variant="danger" onClick={handleCloseInquiryModal} className="me-2">
+          <Button variant="danger" type="button" onClick={handleCloseInquiryModal} className="me-2">
             Cancel
           </Button>
           <Button variant="secondary" type="submit">

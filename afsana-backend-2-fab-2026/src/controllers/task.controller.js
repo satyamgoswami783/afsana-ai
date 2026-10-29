@@ -127,7 +127,7 @@ export const createTask = async (req, res) => {
 //       return res.status(400).json({message: 'counselor_id is required'});
 //     }
 //     const [tasks] = await db.query('SELECT * FROM tasks WHERE counselor_id = ?', [counselor_id]);
-//     if (tasks.length === 0) return res.status(404).json({ message: 'No tasks found' });
+//     if (tasks.length === 0) return res.status(200).json([]);
 //     const data = await Promise.all(
 //       tasks.map(async (task) => {
 
@@ -164,7 +164,7 @@ export const getTaskByCounselorID = async (req, res) => {
     const [tasks] = await db.query('SELECT * FROM tasks WHERE counselor_id = ?', [counselor_id]);
 
     if (tasks.length === 0) {
-      return res.status(404).json({ message: 'No tasks found' });
+      return res.status(200).json([]);
     }
 
     const data = await Promise.all(
@@ -206,7 +206,7 @@ export const getTaskByStudentID = async (req, res) => {
       return res.status(400).json({ message: 'student_id is required' });
     }
     const [tasks] = await db.query('SELECT * FROM tasks WHERE student_id = ?', [student_id]);
-    if (tasks.length === 0) return res.status(404).json({ message: 'No tasks found' });
+    if (tasks.length === 0) return res.status(200).json([]);
     const data = await Promise.all(
       tasks.map(async (task) => {
 
@@ -587,7 +587,7 @@ export const reminder_task = async (req, res) => {
     const [tasks] = await db.query(query, values);
 
     if (tasks.length === 0) {
-      return res.status(404).json({ message: "No reminder tasks found" });
+      return res.status(200).json([]);
     }
     const data = await Promise.all(
       tasks.map(async (task) => {

@@ -154,21 +154,18 @@ const StaffDashboard = () => {
   const fetchDashboardData = async () => {
     setLoading(true);
     try {
-      // 1. Get staff branch and details
       const staffRes = await axios.get(`${BASE_URL}getStaffById/${user_id}`);
       if (staffRes.data?.length > 0) {
         const staff = staffRes.data[0];
         const branch = role === "admin" ? "" : staff.branch;
         const created_at = new Date(staff.created_at).toISOString().split("T")[0];
 
-        // 2. Fetch dashboard metrics with filters
         let queryParams = new URLSearchParams({
           branch,
           ...(role !== "admin" && { created_at }),
           ...filters
         });
         
-        // If staff role, force filter by their own ID
         if (role === "staff") {
           queryParams.set("staff_id", staff.id);
         }
@@ -215,29 +212,46 @@ const StaffDashboard = () => {
       {
         label: "Count",
         data: chartData.map((item) => item.value),
-        backgroundColor: ["#0049B7", "#FF6B00", "#28a745", "#ffc107", "#17a2b8"],
-        borderRadius: 6,
+        backgroundColor: ["#10b981", "#f59e0b", "#059669", "#fbbf24", "#0d9488"],
+        borderRadius: 8,
       },
     ],
   };
 
-  const target = metrics.monthly_target || 100; // Monthly Target
+  const target = metrics.monthly_target || 100;
   const progress = Math.min(((metrics.monthly_achieved || 0) / target) * 100, 100);
+
+  const kpiCards = [
+    { label: "Total Leads", value: metrics.total_leads, accent: "#34d399" },
+    { label: "Total Inquiries", value: metrics.total_inquiries, accent: "#fbbf24" },
+    { label: "Scheduled Visits", value: metrics.scheduled_visits, accent: "#10b981" },
+    { label: "Office Visited", value: metrics.office_visited, accent: "#f59e0b" },
+    { label: "Follow-Ups", value: metrics.total_follow_ups, accent: "#34d399" },
+    { label: "Conversion Rate", value: `${metrics.conversion_rate}%`, accent: "#fbbf24" },
+  ];
 
   return (
     <div className="p-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="mb-0">Staff Dashboard</h2>
-        <div className="d-flex gap-2 align-items-center">
-          <span className="fw-bold text-primary">Monthly Target: {metrics.monthly_achieved}/{target} Visits</span>
+      <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <h2 className="mb-0 fw-bold">Staff Dashboard</h2>
+        <div className="d-flex gap-3 align-items-center">
+          <span className="fw-bold" style={{ color: "#10b981" }}>
+            Monthly Target: {metrics.monthly_achieved}/{target} Visits
+          </span>
           <div style={{ width: "250px" }}>
-            <ProgressBar now={progress} label={`${Math.round(progress)}%`} variant="primary" animated style={{ height: '20px', borderRadius: '10px' }} />
+            <ProgressBar
+              now={progress}
+              label={`${Math.round(progress)}%`}
+              variant="success"
+              animated
+              style={{ height: '20px', borderRadius: '10px' }}
+            />
           </div>
         </div>
       </div>
 
       {/* Filters */}
-      <Card className="mb-4 shadow-sm border-0">
+      <Card className="mb-4 shadow-sm border-0" style={{ borderRadius: "16px", border: "1px solid rgba(16, 185, 129, 0.22)" }}>
         <Card.Body>
           <Row className="g-3 align-items-end">
             <Col md={2}>
@@ -270,10 +284,25 @@ const StaffDashboard = () => {
               </Col>
             )}
             <Col md={3} className="d-flex gap-2">
-              <Button variant="primary" size="sm" onClick={applyFilters} disabled={loading}>
+              <Button
+                size="sm"
+                onClick={applyFilters}
+                disabled={loading}
+                style={{
+                  background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                  border: "none",
+                  fontWeight: 600,
+                  padding: "6px 18px",
+                }}
+              >
                 {loading ? "..." : "Apply"}
               </Button>
-              <Button variant="outline-secondary" size="sm" onClick={resetFilters}>
+              <Button
+                variant="outline-warning"
+                size="sm"
+                onClick={resetFilters}
+                style={{ fontWeight: 600, padding: "6px 16px" }}
+              >
                 Reset
               </Button>
             </Col>
@@ -283,60 +312,41 @@ const StaffDashboard = () => {
 
       {/* KPI Cards */}
       <Row className="g-3 mb-4">
-        <Col md={2}>
-          <Card className="text-center shadow-sm border-0 bg-primary text-white p-3 h-100">
-            <small>Total Leads</small>
-            <h3 className="mb-0 fw-bold">{metrics.total_leads}</h3>
-          </Card>
-        </Col>
-        <Col md={2}>
-          <Card className="text-center shadow-sm border-0 bg-warning text-white p-3 h-100">
-            <small>Total Inquiries</small>
-            <h3 className="mb-0 fw-bold">{metrics.total_inquiries}</h3>
-          </Card>
-        </Col>
-        <Col md={2}>
-          <Card className="text-center shadow-sm border-0 bg-info text-white p-3 h-100">
-            <small>Scheduled Visits</small>
-            <h3 className="mb-0 fw-bold">{metrics.scheduled_visits}</h3>
-          </Card>
-        </Col>
-        <Col md={2}>
-          <Card className="text-center shadow-sm border-0 bg-success text-white p-3 h-100">
-            <small>Office Visited</small>
-            <h3 className="mb-0 fw-bold">{metrics.office_visited}</h3>
-          </Card>
-        </Col>
-        <Col md={2}>
-          <Card className="text-center shadow-sm border-0 bg-indigo text-white p-3 h-100" style={{ backgroundColor: '#6610f2' }}>
-            <small>Follow-Ups</small>
-            <h3 className="mb-0 fw-bold">{metrics.total_follow_ups}</h3>
-          </Card>
-        </Col>
-        <Col md={2}>
-          <Card className="text-center shadow-sm border-0 bg-secondary text-white p-3 h-100">
-            <small>Conversion Rate</small>
-            <h3 className="mb-0 fw-bold">{metrics.conversion_rate}%</h3>
-          </Card>
-        </Col>
+        {kpiCards.map((kpi, idx) => (
+          <Col md={2} key={idx}>
+            <div
+              className="text-center shadow-sm p-3 h-100 d-flex flex-column justify-content-center"
+              style={{
+                background: "linear-gradient(145deg, #0d1f17 0%, #132e22 100%)",
+                border: "1px solid rgba(16, 185, 129, 0.35)",
+                borderTop: `3px solid ${kpi.accent}`,
+                borderRadius: "16px",
+                color: "#ffffff",
+              }}
+            >
+              <small style={{ color: "#cbd5e1", fontWeight: 600 }}>{kpi.label}</small>
+              <h3 className="mb-0 fw-bold mt-1" style={{ color: kpi.accent }}>{kpi.value}</h3>
+            </div>
+          </Col>
+        ))}
       </Row>
 
       {/* Charts */}
       <Row className="g-3">
         <Col md={8}>
-          <Card className="shadow-sm border-0 p-4">
-            <h5 className="mb-3">Performance Analytics</h5>
+          <Card className="shadow-sm border-0 p-4" style={{ borderRadius: "16px" }}>
+            <h5 className="mb-3 fw-bold">Performance Analytics</h5>
             <Bar data={barData} options={{ responsive: true, plugins: { legend: { display: false } } }} />
           </Card>
         </Col>
         <Col md={4}>
-          <Card className="shadow-sm border-0 p-4">
-            <h5 className="mb-3">Lead Distribution</h5>
+          <Card className="shadow-sm border-0 p-4" style={{ borderRadius: "16px" }}>
+            <h5 className="mb-3 fw-bold">Lead Distribution</h5>
             <Pie data={{
               labels: ["Leads", "Inquiries", "Visits"],
               datasets: [{
                 data: [metrics.total_leads, metrics.total_inquiries, metrics.office_visited],
-                backgroundColor: ["#0049B7", "#FF6B00", "#28a745"]
+                backgroundColor: ["#10b981", "#f59e0b", "#059669"]
               }]
             }} />
           </Card>
@@ -344,8 +354,8 @@ const StaffDashboard = () => {
       </Row>
 
       {/* Counselor Lead Summary & Bulk Transfer Section */}
-      <Card className="shadow-sm border-0 p-4 mt-4">
-        <div className="d-flex justify-content-between align-items-center mb-3">
+      <Card className="shadow-sm border-0 p-4 mt-4" style={{ borderRadius: "16px" }}>
+        <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
           <div>
             <h5 className="mb-1 fw-bold">👥 Counselor Lead Assignment & Reassignment Summary</h5>
             <small className="text-muted">
@@ -360,7 +370,12 @@ const StaffDashboard = () => {
               value={counselorSearchTerm}
               onChange={(e) => setCounselorSearchTerm(e.target.value)}
             />
-            <Button variant="outline-primary" size="sm" onClick={fetchCounselorSummary}>
+            <Button
+              variant="outline-success"
+              size="sm"
+              onClick={fetchCounselorSummary}
+              style={{ fontWeight: 600 }}
+            >
               Refresh Counts
             </Button>
           </div>
@@ -399,8 +414,13 @@ const StaffDashboard = () => {
                     <td>
                       {c.assigned_leads_count > 0 ? (
                         <span
-                          className="badge bg-info text-dark shadow-sm px-3 py-2"
-                          style={{ cursor: "pointer", fontSize: "0.9rem" }}
+                          className="badge shadow-sm px-3 py-2"
+                          style={{
+                            cursor: "pointer",
+                            fontSize: "0.9rem",
+                            background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                            color: "#ffffff",
+                          }}
                           onClick={() => handleOpenReassignModal(c)}
                           title="Click to view and reassign/transfer leads"
                         >
@@ -435,8 +455,11 @@ const StaffDashboard = () => {
         >
           <div className="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div className="modal-content">
-              <div className="modal-header bg-primary text-white">
-                <h5 className="modal-title">
+              <div
+                className="modal-header text-white"
+                style={{ background: "linear-gradient(135deg, #0d1f17 0%, #132e22 100%)" }}
+              >
+                <h5 className="modal-title" style={{ color: "#34d399" }}>
                   Assigned Leads for: {selectedCounselorForReassign?.full_name} ({counselorLeads.length} total)
                 </h5>
                 <button
@@ -448,7 +471,7 @@ const StaffDashboard = () => {
               <div className="modal-body">
                 {reassignLoading ? (
                   <div className="text-center py-4">
-                    <div className="spinner-border text-primary" role="status"></div>
+                    <div className="spinner-border text-success" role="status"></div>
                     <p className="mt-2 text-muted">Loading leads...</p>
                   </div>
                 ) : counselorLeads.length === 0 ? (

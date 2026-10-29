@@ -199,7 +199,7 @@ const CounselorDashboard = () => {
     };
   }, [kpiData]);
 
-  const followupEfficiency = kpiData.conversionRate || "0.00"; // Reusing conversionRate or logic from backend
+  const followupEfficiency = kpiData.conversionRate || "0.00";
   const conversionRate = kpiData.conversionRate || "0.00";
 
   const funnelData = {
@@ -208,7 +208,7 @@ const CounselorDashboard = () => {
       {
         label: "Count",
         data: [metrics.inquiries, metrics.leads, metrics.students, metrics.applications],
-        backgroundColor: "#5a67d8",
+        backgroundColor: "#10b981",
       },
     ],
   };
@@ -225,14 +225,27 @@ const CounselorDashboard = () => {
         </div>
       )}
 
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Counselor Dashboard</h2>
-        <ul className="nav nav-pills">
+      <div className="cd-header-bar d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+          <h2 className="cd-page-title mb-1">Counselor Dashboard</h2>
+          <p className="cd-page-subtitle mb-0">Track your leads, student applications, and conversion performance</p>
+        </div>
+        <ul className="nav nav-pills cd-nav-pills">
           <li className="nav-item">
-            <button className={`nav-link ${activeTab === 'overview' ? 'active bg-primary text-white' : 'text-dark'}`} onClick={() => setActiveTab('overview')}>Overview</button>
+            <button
+              className={`nav-link cd-tab-btn ${activeTab === 'overview' ? 'active' : ''}`}
+              onClick={() => setActiveTab('overview')}
+            >
+              Overview
+            </button>
           </li>
           <li className="nav-item">
-            <button className={`nav-link ${activeTab === 'ai-assistant' ? 'active bg-primary text-white' : 'text-dark'}`} onClick={() => setActiveTab('ai-assistant')}><i className="fa-solid fa-robot me-1"></i> AI Assistant</button>
+            <button
+              className={`nav-link cd-tab-btn ${activeTab === 'ai-assistant' ? 'active' : ''}`}
+              onClick={() => setActiveTab('ai-assistant')}
+            >
+              <i className="fa-solid fa-robot me-1"></i> AI Assistant
+            </button>
           </li>
         </ul>
       </div>
@@ -240,7 +253,7 @@ const CounselorDashboard = () => {
       {activeTab === 'overview' && (
         <>
           {/* Filters */}
-          <div className="cd-filters ">
+          <div className="cd-filters">
             {/* Custom Date Range */}
             <div className="date-range-container">
               <label>From:</label>
@@ -327,16 +340,34 @@ const CounselorDashboard = () => {
 
           {/* KPI Cards */}
           <div className="cd-kpis">
-            <div className="cd-kpi-card"><FaUsers /><p>Total Leads</p><h2>{metrics.leads}</h2></div>
-            <div className="cd-kpi-card"><FaUserGraduate /><p>Total Students</p><h2>{metrics.students}</h2></div>
-            <div className="cd-kpi-card"><FaTasks /><p>Total Tasks</p><h2>{metrics.tasks}</h2></div>
-            <div className="cd-kpi-card"><FaReply /><p>Total Follow-ups</p><h2>{metrics.followups}</h2></div>
+            <div className="cd-kpi-card kpi-emerald">
+              <div className="cd-kpi-icon"><FaUsers /></div>
+              <p>Total Leads</p>
+              <h2>{metrics.leads}</h2>
+            </div>
+            <div className="cd-kpi-card kpi-gold">
+              <div className="cd-kpi-icon"><FaUserGraduate /></div>
+              <p>Total Students</p>
+              <h2>{metrics.students}</h2>
+            </div>
+            <div className="cd-kpi-card kpi-teal">
+              <div className="cd-kpi-icon"><FaTasks /></div>
+              <p>Total Tasks</p>
+              <h2>{metrics.tasks}</h2>
+            </div>
+            <div className="cd-kpi-card kpi-amber">
+              <div className="cd-kpi-icon"><FaReply /></div>
+              <p>Total Follow-ups</p>
+              <h2>{metrics.followups}</h2>
+            </div>
           </div>
 
           <div className="cd-kpi-card efficiency-box">
-            <FaChartLine />
-            <p>Efficiency</p>
-            <h2>Conversion: {conversionRate}%</h2>
+            <div className="efficiency-icon-wrap">
+              <FaChartLine />
+            </div>
+            <p className="efficiency-label">Efficiency & Growth</p>
+            <h2 className="efficiency-value">Conversion: <span>{conversionRate}%</span></h2>
           </div>
 
           {/* Tables */}
@@ -430,48 +461,371 @@ const CounselorDashboard = () => {
         </div>
       )}
 
-      <style jsx global>{`
+      <style>{`
         .fullscreen-loader {
           position: fixed;
           top: 0;
           left: 0;
           width: 100%;
           height: 100%;
-          background-color: rgba(255, 255, 255, 0.95);
+          background-color: rgba(244, 247, 246, 0.92);
+          backdrop-filter: blur(8px);
           display: flex;
           justify-content: center;
           align-items: center;
           z-index: 9999;
         }
+        body.dark-theme .fullscreen-loader {
+          background-color: rgba(8, 12, 9, 0.92);
+          color: #f1f5f9;
+        }
         .loader-container { text-align: center; }
         .spinner {
-          border: 5px solid rgba(90, 103, 216, 0.2);
+          border: 4px solid rgba(16, 185, 129, 0.2);
           border-radius: 50%;
-          border-top: 5px solid #5a67d8;
+          border-top: 4px solid #10b981;
           width: 50px;
           height: 50px;
           animation: spin 1s linear infinite;
           margin: 0 auto 15px;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .cd-wrapper { padding: 20px; max-width: 1200px; margin: 0 auto; }
-        .cd-filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
-        .date-range-container { display: flex; align-items: center; gap: 8px; background-color: white; border: 1px solid #ccc; border-radius: 4px; padding: 8px 12px; }
-        .cd-select { padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: white; min-width: 150px; }
-        .cd-date-input { border: 1px solid #ccc; border-radius: 4px; outline: none; padding: 4px 8px; font-size: 14px; width: 130px; }
-        .cd-reset, .cd-apply { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .cd-reset { background-color: #f0f0f0; color: #333; }
-        .cd-apply { background-color: #5a67d8; color: white; }
-        .cd-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px; }
-        .cd-kpi-card { background-color: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; text-align: center; }
-        .cd-kpi-card svg { font-size: 24px; color: #5a67d8; margin-bottom: 10px; }
-        .efficiency-box { grid-column: span 2; display: flex; flex-direction: column; align-items: center; }
+
+        .cd-wrapper {
+          padding: 24px;
+          max-width: 1320px;
+          margin: 0 auto;
+          font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .cd-page-title {
+          font-weight: 800;
+          letter-spacing: -0.02em;
+          color: #0f172a;
+        }
+        body.dark-theme .cd-page-title {
+          color: #f1f5f9;
+        }
+        .cd-page-subtitle {
+          font-size: 0.9rem;
+          color: #64748b;
+        }
+        body.dark-theme .cd-page-subtitle {
+          color: #94a3b8;
+        }
+
+        /* Nav Pills */
+        .cd-nav-pills {
+          background: rgba(16, 185, 129, 0.08);
+          padding: 5px;
+          border-radius: 14px;
+          border: 1px solid rgba(16, 185, 129, 0.22);
+          gap: 6px;
+        }
+        body.dark-theme .cd-nav-pills {
+          background: rgba(16, 24, 19, 0.9);
+          border-color: rgba(16, 185, 129, 0.28);
+        }
+        .cd-tab-btn {
+          border-radius: 10px !important;
+          font-weight: 600 !important;
+          font-size: 0.9rem !important;
+          padding: 8px 18px !important;
+          color: #0f172a !important;
+          background: transparent !important;
+          border: none !important;
+          transition: all 0.25s ease !important;
+        }
+        body.dark-theme .cd-tab-btn {
+          color: #cbd5e1 !important;
+        }
+        .cd-tab-btn.active {
+          background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+          color: #ffffff !important;
+          box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35) !important;
+        }
+
+        /* Filters */
+        .cd-filters {
+          display: flex;
+          gap: 12px;
+          margin-bottom: 24px;
+          flex-wrap: wrap;
+          align-items: center;
+          background: rgba(255, 255, 255, 0.92);
+          border: 1px solid rgba(16, 185, 129, 0.22);
+          border-radius: 16px;
+          padding: 16px;
+          box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.05);
+        }
+        body.dark-theme .cd-filters {
+          background: linear-gradient(160deg, rgba(16, 24, 19, 0.95) 0%, rgba(10, 16, 12, 0.95) 100%);
+          border-color: rgba(16, 185, 129, 0.25);
+          box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+        }
+        .date-range-container {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          background-color: #f8fafc;
+          border: 1px solid rgba(16, 185, 129, 0.25);
+          border-radius: 10px;
+          padding: 6px 12px;
+          font-weight: 600;
+          font-size: 0.85rem;
+          color: #334155;
+        }
+        body.dark-theme .date-range-container {
+          background-color: rgba(20, 32, 24, 0.88);
+          border-color: rgba(16, 185, 129, 0.28);
+          color: #cbd5e1;
+        }
+        .cd-select {
+          padding: 9px 14px;
+          border: 1px solid rgba(16, 185, 129, 0.25);
+          border-radius: 10px;
+          background-color: #f8fafc;
+          color: #0f172a;
+          min-width: 150px;
+          font-weight: 500;
+          font-size: 0.9rem;
+          transition: all 0.2s ease;
+        }
+        .cd-date-input {
+          border: 1px solid rgba(16, 185, 129, 0.22);
+          border-radius: 8px;
+          outline: none;
+          padding: 5px 10px;
+          font-size: 0.85rem;
+          width: 135px;
+          background-color: #ffffff;
+          color: #0f172a;
+        }
+        .cd-select:focus, .cd-date-input:focus {
+          border-color: #10b981;
+          box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18);
+        }
+        .cd-reset, .cd-apply {
+          padding: 9px 18px;
+          border-radius: 10px;
+          cursor: pointer;
+          font-weight: 700;
+          font-size: 0.88rem;
+          transition: all 0.25s ease;
+        }
+        .cd-reset {
+          background: rgba(245, 158, 11, 0.1);
+          color: #d97706;
+          border: 1px solid rgba(245, 158, 11, 0.35);
+        }
+        body.dark-theme .cd-reset {
+          background: rgba(245, 158, 11, 0.14);
+          color: #fbbf24;
+          border-color: rgba(245, 158, 11, 0.35);
+        }
+        .cd-reset:hover {
+          background: rgba(245, 158, 11, 0.2);
+          transform: translateY(-1px);
+        }
+        .cd-apply {
+          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+          color: #ffffff;
+          border: 1px solid rgba(16, 185, 129, 0.4);
+          box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+          margin-left: auto;
+        }
+        .cd-apply:hover {
+          background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+          box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
+          transform: translateY(-1px);
+        }
+
+        /* KPI Cards - Luxury Emerald & Gold Palette */
+        .cd-kpis {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          gap: 20px;
+          margin-bottom: 24px;
+        }
+        .cd-kpi-card {
+          background: linear-gradient(145deg, #0d1f17 0%, #132e22 100%);
+          border: 1px solid rgba(16, 185, 129, 0.32);
+          border-radius: 18px;
+          padding: 24px 20px;
+          box-shadow: 0 12px 28px -6px rgba(13, 31, 23, 0.25);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          position: relative;
+          overflow: hidden;
+          color: #ffffff;
+          transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+        .cd-kpi-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 3px;
+          background: linear-gradient(90deg, #10b981, #fbbf24, #10b981);
+        }
+        .cd-kpi-card:hover {
+          transform: translateY(-4px);
+          border-color: rgba(52, 211, 153, 0.6);
+          box-shadow: 0 18px 36px -8px rgba(16, 185, 129, 0.3);
+        }
+        .cd-kpi-icon {
+          width: 52px;
+          height: 52px;
+          border-radius: 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 12px;
+          background: rgba(16, 185, 129, 0.16);
+          border: 1px solid rgba(16, 185, 129, 0.35);
+        }
+        .cd-kpi-card svg {
+          font-size: 24px;
+          color: #34d399;
+          margin-bottom: 0;
+        }
+        .cd-kpi-card.kpi-gold .cd-kpi-icon,
+        .cd-kpi-card.kpi-amber .cd-kpi-icon {
+          background: rgba(245, 158, 11, 0.16);
+          border-color: rgba(251, 191, 36, 0.38);
+        }
+        .cd-kpi-card.kpi-gold svg,
+        .cd-kpi-card.kpi-amber svg {
+          color: #fbbf24;
+        }
+        .cd-kpi-card p {
+          color: #cbd5e1 !important;
+          font-weight: 600;
+          font-size: 0.92rem;
+          margin-bottom: 6px;
+          letter-spacing: 0.01em;
+        }
+        .cd-kpi-card h2 {
+          color: #ffffff !important;
+          font-weight: 800;
+          font-size: 2.1rem;
+          margin: 0;
+        }
+
+        /* Efficiency Banner - Landing Page Emerald & Gold Hero Style */
+        .cd-kpi-card.efficiency-box {
+          background: linear-gradient(135deg, #091510 0%, #112a1f 50%, #1a2512 100%) !important;
+          border: 1px solid rgba(251, 191, 36, 0.4) !important;
+          border-radius: 20px;
+          padding: 28px 24px;
+          margin-bottom: 30px;
+          box-shadow: 0 18px 40px -10px rgba(0, 0, 0, 0.35);
+          position: relative;
+        }
+        .cd-kpi-card.efficiency-box::after {
+          content: '';
+          position: absolute;
+          top: -50%;
+          right: -5%;
+          width: 280px;
+          height: 280px;
+          background: radial-gradient(circle, rgba(251, 191, 36, 0.16) 0%, transparent 70%);
+          pointer-events: none;
+        }
+        .efficiency-icon-wrap {
+          width: 56px;
+          height: 56px;
+          border-radius: 16px;
+          background: linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, rgba(16, 185, 129, 0.2) 100%);
+          border: 1px solid rgba(251, 191, 36, 0.45);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 10px;
+        }
+        .cd-kpi-card.efficiency-box svg {
+          color: #fbbf24 !important;
+          font-size: 26px;
+        }
+        .efficiency-label {
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          font-size: 0.8rem !important;
+          color: #34d399 !important;
+          font-weight: 700 !important;
+        }
+        .efficiency-value {
+          font-size: 2rem !important;
+          font-weight: 800 !important;
+          color: #ffffff !important;
+        }
+        .efficiency-value span {
+          color: #fbbf24;
+        }
+
+        /* Tables */
         .cd-tables { margin-top: 30px; }
-        .cd-table-box { overflow-x: auto; margin-bottom: 30px; }
-        .cd-table { width: 100%; border-collapse: collapse; background-color: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .cd-table th { background-color: #5a67d8; color: white; padding: 12px 15px; text-align: left; }
-        .cd-table td { padding: 12px 15px; border-bottom: 1px solid #eee; }
-        .no-data { text-align: center; color: #666; font-style: italic; }
+        .cd-tables h4 {
+          font-weight: 700;
+          font-size: 1.15rem;
+          margin-bottom: 14px;
+          color: #0f172a;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        .cd-tables h4::before {
+          content: '';
+          display: inline-block;
+          width: 5px;
+          height: 20px;
+          border-radius: 4px;
+          background: linear-gradient(180deg, #10b981 0%, #fbbf24 100%);
+        }
+        body.dark-theme .cd-tables h4 {
+          color: #f1f5f9;
+        }
+        .cd-table-box {
+          overflow-x: auto;
+          margin-bottom: 30px;
+          background: #ffffff;
+          border-radius: 16px;
+          padding: 12px;
+          border: 1px solid rgba(16, 185, 129, 0.2);
+          box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.05);
+        }
+        .cd-table {
+          width: 100%;
+          border-collapse: collapse;
+          background-color: transparent;
+          border-radius: 12px;
+          overflow: hidden;
+        }
+        .cd-table th {
+          background: linear-gradient(135deg, #0d1f17 0%, #143325 100%) !important;
+          color: #34d399 !important;
+          padding: 14px 16px;
+          text-align: left;
+          font-weight: 700;
+          font-size: 0.85rem;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+          border-bottom: 2px solid rgba(16, 185, 129, 0.4) !important;
+        }
+        .cd-table td {
+          padding: 13px 16px;
+          border-bottom: 1px solid rgba(16, 185, 129, 0.12);
+          color: #1e293b;
+        }
+        .no-data {
+          text-align: center !important;
+          color: #64748b !important;
+          font-style: italic;
+          padding: 24px !important;
+        }
       `}</style>
     </div>
   );

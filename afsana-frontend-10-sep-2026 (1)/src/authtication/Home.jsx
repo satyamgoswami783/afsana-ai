@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Navbar,
   Nav,
@@ -11,6 +11,7 @@ import {
   Form,
 } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
+import { ThemeContext } from "../context/ThemeContext";
 import InquiryForm from "./InquiryForm";
 import "./Home.css";
 import bmu from "../assets/bmulogo.webp";
@@ -28,26 +29,11 @@ const App = () => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [recaptchaValue, setRecaptchaValue] = useState(null);
 
-  // Light / Dark Theme State
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    return localStorage.getItem("app_theme") !== "light";
-  });
+  const { isDarkMode, toggleTheme } = useContext(ThemeContext);
 
-  useEffect(() => {
-    if (isDarkMode) {
-      document.body.classList.remove("light-theme");
-      document.body.classList.add("dark-theme");
-      localStorage.setItem("app_theme", "dark");
-    } else {
-      document.body.classList.remove("dark-theme");
-      document.body.classList.add("light-theme");
-      localStorage.setItem("app_theme", "light");
-    }
-  }, [isDarkMode]);
+  // Import ThemeContext
+  // Ensure ThemeContext is imported from '../../context/ThemeContext'
 
-  const toggleTheme = () => {
-    setIsDarkMode((prev) => !prev);
-  };
 
   // Scroll listener to keep navbar fixed and styled smoothly on scroll
   const [isScrolled, setIsScrolled] = useState(false);
@@ -252,7 +238,14 @@ const App = () => {
     navigate("/signup")
   }
   return (
-    <div className={`landing-page-root ${isDarkMode ? "dark-theme-root" : "light-theme-root"}`} style={{ minHeight: '100vh', background: 'transparent' }}>
+    <div className={`landing-page-root ${isDarkMode ? "dark-theme-root" : "light-theme-root"}`} style={{ minHeight: '100vh', background: 'transparent', position: 'relative' }}>
+      {/* Ambient Shadow-Style Background Photo Layer */}
+      <div className="landing-shadow-bg" aria-hidden="true">
+        <div className="landing-shadow-photo-primary"></div>
+        <div className="landing-shadow-photo-silhouette"></div>
+        <div className="landing-shadow-vignette"></div>
+      </div>
+
       <PaymentFormModal
         show={showPaymentModal}
         handleClose={handleClosePaymentModal}
@@ -260,13 +253,13 @@ const App = () => {
       {/* Navbar — Fixed on top and stays during scroll */}
       <Navbar expand="lg" fixed="top" className={`navbarHome ${isScrolled ? "scrolled" : ""}`}>
         <Container>
-          <Navbar.Brand href="#" className="d-flex align-items-center me-4">
+          <Navbar.Brand href="#" className="d-flex align-items-center me-2 me-lg-4">
             <img
               src="/img/kiaan_logo.png"
               alt="Kiaan Technology"
               height="44"
-              className="me-2"
-              style={{ objectFit: 'contain' }}
+              className="me-2 navbar-brand-logo"
+              style={{ objectFit: 'contain', borderRadius: '8px' }}
             />
             <div className="brand-text ms-2 d-flex flex-column">
               <span className="fw-bold m-0" style={{ lineHeight: '1', fontSize: '1.45rem' }}>Kiaan</span>
@@ -282,7 +275,7 @@ const App = () => {
               <Nav.Link href="#contact" className="nav-link-hover mx-2">Contact</Nav.Link>
             </Nav>
 
-            <div className="d-flex align-items-center gap-3">
+            <div className="navbar-actions-group d-flex align-items-center flex-wrap gap-2 gap-xl-3">
               {/* Light / Dark Mode Toggle Button */}
               <button
                 type="button"
@@ -295,7 +288,7 @@ const App = () => {
               </button>
 
               <Button
-                className="d-flex align-items-center px-4"
+                className="nav-action-btn d-flex align-items-center justify-content-center px-3 px-xl-4"
                 onClick={handleOpenPaymentModal}
                 style={{ borderRadius: '50px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', border: 'none', color: '#ffffff', fontWeight: 800, boxShadow: '0 4px 15px rgba(16,185,129,0.3)' }}
                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.background = 'linear-gradient(135deg, #34d399 0%, #10b981 100%)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(16,185,129,0.5)'; }}
@@ -305,7 +298,7 @@ const App = () => {
               </Button>
               <Link
                 to="/login"
-                className="btn px-4 fw-bold"
+                className="nav-action-btn btn px-3 px-xl-4 fw-bold d-flex align-items-center justify-content-center"
                 style={{ borderRadius: '50px', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.35)', color: isDarkMode ? '#34d399' : '#059669', transition: 'all 0.3s ease' }}
                 onMouseEnter={e => { e.currentTarget.style.background = 'rgba(16,185,129,0.22)'; e.currentTarget.style.color = '#fff'; }}
                 onMouseLeave={e => { e.currentTarget.style.background = 'rgba(16,185,129,0.1)'; e.currentTarget.style.color = isDarkMode ? '#34d399' : '#059669'; }}
@@ -313,7 +306,7 @@ const App = () => {
                 Log in
               </Link>
               <Button
-                className="d-flex align-items-center px-4 fw-bold"
+                className="nav-action-btn d-flex align-items-center justify-content-center px-3 px-xl-4 fw-bold"
                 onClick={handleOpenInquiry}
                 style={{ borderRadius: '50px', background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', border: isDarkMode ? '1px solid rgba(255,255,255,0.2)' : '1px solid rgba(0,0,0,0.15)', color: isDarkMode ? '#fff' : '#0f172a', transition: 'all 0.3s ease' }}
                 onMouseEnter={e => { e.currentTarget.style.background = isDarkMode ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.1)'; }}
@@ -328,11 +321,11 @@ const App = () => {
 
       <section className="hero-section">
         <div className="hero-video-bg"></div>
+        <div className="hero-shadow-silhouette"></div>
         <div className="hero-overlay"></div>
-        <div className="sky-flying-plane">✈️</div>
 
         <div className="hero-content">
-          <Row className="align-items-center g-5">
+          <Row className="align-items-center g-4 g-lg-5">
             <Col lg={7}>
               <div className="hero-badge" data-aos="fade-up">
                 <span className="hero-badge-dot"></span>
@@ -340,7 +333,9 @@ const App = () => {
               </div>
               <h1 className="hero-title" data-aos="fade-up" data-aos-delay="100">
                 Your global <br className="d-none d-md-block" />
-                <span className="gradient-text">education journey</span><br className="d-none d-md-block" />
+                <span className="gradient-text">education journey</span>
+                <span className="hero-inline-plane" aria-hidden="true">✈️</span>
+                <br className="d-none d-md-block" />
                 starts here.
               </h1>
               <p className="hero-subtitle" data-aos="fade-up" data-aos-delay="200">
@@ -350,9 +345,42 @@ const App = () => {
                 <Button variant="light" size="lg" className="pulse-button" onClick={handleOpenInquiry}>
                   Start Free Assessment <i className="fas fa-arrow-right ms-2"></i>
                 </Button>
-                <a href="tel:+1231234568977" className="btn hover-fill btn-lg text-decoration-none">
-                  Call Consultant
+                <a href="tel:+1231234568977" className="btn hover-fill btn-lg text-decoration-none d-inline-flex align-items-center">
+                  <i className="fas fa-phone-alt me-2"></i> Call Consultant
                 </a>
+              </div>
+
+              {/* Hero Bottom Feature Trust Bar (matches screenshot) */}
+              <div className="hero-trust-bar" data-aos="fade-up" data-aos-delay="350">
+                <div className="hero-trust-item">
+                  <span className="hero-trust-icon">
+                    <i className="fas fa-award"></i>
+                  </span>
+                  <div className="hero-trust-text">
+                    <span>Top University</span>
+                    <span>Partnerships</span>
+                  </div>
+                </div>
+                <div className="hero-trust-divider"></div>
+                <div className="hero-trust-item">
+                  <span className="hero-trust-icon">
+                    <i className="fas fa-users"></i>
+                  </span>
+                  <div className="hero-trust-text">
+                    <span>Personalized</span>
+                    <span>Guidance</span>
+                  </div>
+                </div>
+                <div className="hero-trust-divider"></div>
+                <div className="hero-trust-item">
+                  <span className="hero-trust-icon">
+                    <i className="fas fa-shield-alt"></i>
+                  </span>
+                  <div className="hero-trust-text">
+                    <span>End-to-End</span>
+                    <span>Visa Support</span>
+                  </div>
+                </div>
               </div>
             </Col>
 
@@ -365,12 +393,12 @@ const App = () => {
                   className="airplane-card-img"
                 />
                 <div className="airplane-card-overlay">
-                  <div className="d-flex justify-content-between align-items-center mb-2">
-                    <span className="flight-status-badge">
+                  <div className="flight-badges-row d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                    <span className="flight-status-badge mb-0">
                       <span className="flight-live-dot"></span>
                       FLIGHT TO GLOBAL DREAMS
                     </span>
-                    <span style={{ fontSize: '0.75rem', color: '#fbbf24', fontWeight: 700, background: 'rgba(245,158,11,0.15)', padding: '4px 10px', borderRadius: 50, border: '1px solid rgba(245,158,11,0.3)' }}>
+                    <span className="flight-visa-pill" style={{ fontSize: '0.75rem', color: '#fbbf24', fontWeight: 700, background: 'rgba(13, 20, 16, 0.85)', backdropFilter: 'blur(8px)', padding: '4px 10px', borderRadius: 50, border: '1px solid rgba(245,158,11,0.4)', whiteSpace: 'nowrap' }}>
                       98.4% Visa Success
                     </span>
                   </div>
@@ -398,18 +426,30 @@ const App = () => {
               {/* Hero Stats Grid */}
               <div className="hero-stats-grid">
                 <div className="stat-card-small">
+                  <div className="stat-icon-box">
+                    <i className="fas fa-file-invoice"></i>
+                  </div>
                   <span className="stat-value">14,750+</span>
                   <span className="stat-label">Visas processed</span>
                 </div>
                 <div className="stat-card-small">
+                  <div className="stat-icon-box">
+                    <i className="fas fa-chart-bar"></i>
+                  </div>
                   <span className="stat-value">96%</span>
                   <span className="stat-label">Success rate</span>
                 </div>
                 <div className="stat-card-small">
+                  <div className="stat-icon-box">
+                    <i className="fas fa-globe"></i>
+                  </div>
                   <span className="stat-value">49+</span>
                   <span className="stat-label">Countries served</span>
                 </div>
                 <div className="stat-card-small">
+                  <div className="stat-icon-box">
+                    <i className="fas fa-graduation-cap"></i>
+                  </div>
                   <span className="stat-value">500+</span>
                   <span className="stat-label">Partner universities</span>
                 </div>
@@ -421,119 +461,67 @@ const App = () => {
 
 
       {/* Our Services Section */}
-      <section className="py-5" id="services" style={{ maxWidth: 1320, margin: '0 auto', padding: '80px 24px 20px' }}>
-        <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', fontWeight: 800, color: '#fff', textAlign: 'center', marginBottom: 8 }}>
-          Our Core <span style={{ background: 'linear-gradient(90deg, #34d399, #10b981, #fbbf24)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Services</span>
-        </h2>
-        <p style={{ textAlign: 'center', color: '#94a3b8', fontSize: '1.05rem', marginBottom: 48 }}>Comprehensive support for your international education journey</p>
-        <Row className="g-4">
-          {[
-            { icon: '🎓', title: 'University Admissions', desc: 'Expert guidance in selecting the right university and course to match your career goals.' },
-            { icon: '🛂', title: 'Visa Assistance', desc: 'Complete support with visa documentation, application filing, and interview preparation.' },
-            { icon: '💼', title: 'Career Counseling', desc: 'Personalized counseling to help you identify the best career pathways globally.' },
-            { icon: '💰', title: 'Scholarship Guidance', desc: 'Assistance in identifying and applying for international scholarships and financial aid.' },
-            { icon: '✈️', title: 'Pre-Departure Support', desc: 'Briefings and support to ensure a smooth transition to your new host country.' },
-            { icon: '🏠', title: 'Accommodation Help', desc: 'Finding safe and affordable housing options near your chosen university.' },
-          ].map((service, index) => (
-            <Col key={index} lg={4} md={6}>
-              <div style={{ background: 'linear-gradient(160deg, #101813 0%, #080d0a 100%)', border: '1px solid rgba(16,185,129,0.15)', borderRadius: 20, padding: 30, height: '100%', transition: 'all 0.3s ease', cursor: 'default' }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.borderColor = 'rgba(16,185,129,0.5)'; e.currentTarget.style.boxShadow = '0 10px 30px rgba(16,185,129,0.15)'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'rgba(16,185,129,0.15)'; e.currentTarget.style.boxShadow = 'none'; }}
-              >
-                <div style={{ width: 60, height: 60, borderRadius: 16, background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.8rem', marginBottom: 20 }}>
-                  {service.icon}
+      <div className="landing-section-services">
+        <section className="py-5 position-relative landing-inner-container" id="services" style={{ maxWidth: 1320, margin: '0 auto', padding: '80px 24px 20px', zIndex: 2 }}>
+          <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', fontWeight: 800, color: isDarkMode ? '#fff' : '#0f172a', textAlign: 'center', marginBottom: 8, textShadow: isDarkMode ? '0 2px 12px rgba(0,0,0,0.6)' : '0 2px 14px rgba(255,255,255,0.95)' }}>
+            Our Core <span style={{ background: 'linear-gradient(90deg, #10b981, #059669, #d97706)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Services</span>
+          </h2>
+          <p style={{ textAlign: 'center', color: isDarkMode ? '#cbd5e1' : '#1e293b', fontWeight: 600, fontSize: '1.05rem', marginBottom: 48, textShadow: isDarkMode ? '0 1px 8px rgba(0,0,0,0.6)' : '0 1px 10px rgba(255,255,255,0.95)' }}>Comprehensive support for your international education journey</p>
+          <Row className="g-4">
+            {[
+              { icon: '🎓', title: 'University Admissions', desc: 'Expert guidance in selecting the right university and course to match your career goals.' },
+              { icon: '🛂', title: 'Visa Assistance', desc: 'Complete support with visa documentation, application filing, and interview preparation.' },
+              { icon: '💼', title: 'Career Counseling', desc: 'Personalized counseling to help you identify the best career pathways globally.' },
+              { icon: '💰', title: 'Scholarship Guidance', desc: 'Assistance in identifying and applying for international scholarships and financial aid.' },
+              { icon: '✈️', title: 'Pre-Departure Support', desc: 'Briefings and support to ensure a smooth transition to your new host country.' },
+              { icon: '🏠', title: 'Accommodation Help', desc: 'Finding safe and affordable housing options near your chosen university.' },
+            ].map((service, index) => (
+              <Col key={index} lg={4} md={6}>
+                <div className="service-card" style={{ background: isDarkMode ? 'linear-gradient(160deg, rgba(16, 24, 19, 0.88) 0%, rgba(8, 13, 10, 0.92) 100%)' : 'rgba(255, 255, 255, 0.92)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid rgba(16,185,129,0.22)', borderRadius: 20, padding: 30, height: '100%', transition: 'all 0.3s ease', cursor: 'default', boxShadow: isDarkMode ? '0 14px 34px rgba(0,0,0,0.45)' : '0 12px 30px rgba(15, 23, 42, 0.06)' }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.borderColor = 'rgba(16,185,129,0.5)'; e.currentTarget.style.boxShadow = '0 10px 30px rgba(16,185,129,0.18)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'rgba(16,185,129,0.22)'; e.currentTarget.style.boxShadow = isDarkMode ? '0 14px 34px rgba(0,0,0,0.45)' : '0 12px 30px rgba(15, 23, 42, 0.06)'; }}
+                >
+                  <div style={{ width: 60, height: 60, borderRadius: 16, background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.8rem', marginBottom: 20 }}>
+                    {service.icon}
+                  </div>
+                  <h4 style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700, color: isDarkMode ? '#fff' : '#0f172a', fontSize: '1.25rem', marginBottom: 12 }}>{service.title}</h4>
+                  <p style={{ color: isDarkMode ? '#94a3b8' : '#475569', fontSize: '0.9rem', lineHeight: 1.6, margin: 0 }}>{service.desc}</p>
                 </div>
-                <h4 style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700, color: '#fff', fontSize: '1.25rem', marginBottom: 12 }}>{service.title}</h4>
-                <p style={{ color: '#94a3b8', fontSize: '0.9rem', lineHeight: 1.6, margin: 0 }}>{service.desc}</p>
-              </div>
-            </Col>
-          ))}
-        </Row>
-      </section>
+              </Col>
+            ))}
+          </Row>
+        </section>
+      </div>
 
       {/* Featured Universities */}
+      <div className="landing-section-universities">
+        <Container className="py-5 position-relative landing-inner-container" id="about" style={{ zIndex: 2 }}>
+          <UniversityCards />
+        </Container>
+      </div>
 
-      <Container className="py-5" id="about">
-        {/* <h2 className="text-center fw-bold mb-5">
-          Top International Universities
-        </h2> */}
-        {/* <Row className="g-4">
-          {universities.map((university, index) => (
-            <Col key={index} md={4} className="mb-4">
-              <Card className="h-100">
-                <Card.Header className="text-center">
-                  <img
-                    src={university.img} // Use the university's logo image if available
-                    alt={`${university.name} Logo`}
-                    className="w-25 mb-3"
-                  />
-                  <h5>{university.name}</h5>
-                </Card.Header>
-                <Card.Body>
-                  <Card.Text>
-                    <strong>Location: </strong>
-                    {university.location}
-                  </Card.Text>
-                  <Card.Text>
-                    <strong>Popular Programs:</strong>
-                    <ul>
-                      {university.popularPrograms.map((program, idx) => (
-                        <li key={idx}>{program}</li>
-                      ))}
-                    </ul>
-                  </Card.Text>
-                  <Card.Text>
-                    <strong>Key Highlights:</strong>
-                    <ul>
-                      {university.keyHighlights.map((highlight, idx) => (
-                        <li key={idx}>{highlight}</li>
-                      ))}
-                    </ul>
-                  </Card.Text>
-                  <Card.Text>
-                    <strong>Contact:</strong> {university.contact}
-                  </Card.Text>
-                  <Card.Text>
-                    <strong>Email:</strong> {university.email}
-                  </Card.Text>
-                  <Button variant="primary" className="w-100">
-                    <Link
-                      to={"/login"}
-                      className="text-decoration-none"
-                      style={{ color: "white" }}
-                    >
-                      Apply Now
-                    </Link>
-                  </Button>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row> */}
-        <UniversityCards />
-
-      </Container>
       {/* Top-rated Courses */}
-      <section className="py-5" id="courses" style={{ maxWidth: 1320, margin: '0 auto', padding: '60px 24px 80px' }}>
-        <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', fontWeight: 800, color: '#fff', textAlign: 'center', marginBottom: 8 }}>
-          Top-rated <span style={{ background: 'linear-gradient(90deg, #34d399, #10b981, #fbbf24)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Courses</span>
-        </h2>
-        <p style={{ textAlign: 'center', color: '#94a3b8', fontSize: '1.05rem', marginBottom: 48 }}>Discover industry-leading programs designed for global careers</p>
-        <Row className="g-4">
-          {topCourses.map((course, index) => (
-            <Col key={index} lg={4} md={6} className="mb-2">
-              <div style={{ position: 'relative', borderRadius: 20, padding: 1, background: 'linear-gradient(135deg, rgba(16,185,129,0.25), rgba(245,158,11,0.12), rgba(16,185,129,0.05))', transition: 'all 0.4s cubic-bezier(.4,0,.2,1)', height: '100%' }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(52,211,153,0.7), rgba(16,185,129,0.5), rgba(245,158,11,0.3))'; e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.boxShadow = '0 20px 50px rgba(0,0,0,0.65), 0 0 25px rgba(16,185,129,0.18)'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(16,185,129,0.25), rgba(245,158,11,0.12), rgba(16,185,129,0.05))'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
-              >
-                <div style={{ background: 'linear-gradient(160deg, #101813 0%, #080d0a 100%)', borderRadius: 19, overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%' }}>
-                  {/* Image Section */}
-                  <div style={{ position: 'relative', overflow: 'hidden' }}>
-                    <img src={course.img} alt={course.title} style={{ width: '100%', height: 200, objectFit: 'cover', display: 'block', transition: 'transform 0.5s ease' }}
-                      onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
-                      onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-                    />
-                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 60, background: 'linear-gradient(transparent, #080d0a)' }} />
+      <div className="landing-section-courses">
+        <section className="py-5 position-relative landing-inner-container" id="courses" style={{ maxWidth: 1320, margin: '0 auto', padding: '60px 24px 80px', zIndex: 2 }}>
+          <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', fontWeight: 800, color: isDarkMode ? '#fff' : '#0f172a', textAlign: 'center', marginBottom: 8, textShadow: isDarkMode ? '0 2px 12px rgba(0,0,0,0.6)' : '0 2px 14px rgba(255,255,255,0.95)' }}>
+            Top-rated <span style={{ background: 'linear-gradient(90deg, #10b981, #059669, #d97706)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Courses</span>
+          </h2>
+          <p style={{ textAlign: 'center', color: isDarkMode ? '#cbd5e1' : '#1e293b', fontWeight: 600, fontSize: '1.05rem', marginBottom: 48, textShadow: isDarkMode ? '0 1px 8px rgba(0,0,0,0.6)' : '0 1px 10px rgba(255,255,255,0.95)' }}>Discover industry-leading programs designed for global careers</p>
+          <Row className="g-4">
+            {topCourses.map((course, index) => (
+              <Col key={index} lg={4} md={6} className="mb-2">
+                <div style={{ position: 'relative', borderRadius: 20, padding: 1, background: 'linear-gradient(135deg, rgba(16,185,129,0.25), rgba(245,158,11,0.12), rgba(16,185,129,0.05))', transition: 'all 0.4s cubic-bezier(.4,0,.2,1)', height: '100%' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(52,211,153,0.7), rgba(16,185,129,0.5), rgba(245,158,11,0.3))'; e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.boxShadow = isDarkMode ? '0 20px 50px rgba(0,0,0,0.65), 0 0 25px rgba(16,185,129,0.18)' : '0 20px 45px rgba(15,23,42,0.12), 0 0 25px rgba(16,185,129,0.18)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(16,185,129,0.25), rgba(245,158,11,0.12), rgba(16,185,129,0.05))'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
+                >
+                  <div style={{ background: isDarkMode ? 'linear-gradient(160deg, rgba(16, 24, 19, 0.9) 0%, rgba(8, 13, 10, 0.94) 100%)' : 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', borderRadius: 19, overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%' }}>
+                    {/* Image Section */}
+                    <div style={{ position: 'relative', overflow: 'hidden' }}>
+                      <img src={course.img} alt={course.title} loading="lazy" style={{ width: '100%', height: 200, objectFit: 'cover', display: 'block', transition: 'transform 0.5s ease' }}
+                        onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
+                        onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+                      />
+                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 60, background: isDarkMode ? 'linear-gradient(transparent, #080d0a)' : 'linear-gradient(transparent, rgba(255,255,255,0.95))' }} />
                     {/* Price Tag */}
                     <span style={{ position: 'absolute', top: 14, right: 14, background: 'linear-gradient(135deg, #10b981, #059669)', color: '#ffffff', padding: '5px 14px', borderRadius: 50, fontWeight: 800, fontSize: '0.85rem', boxShadow: '0 4px 12px rgba(16,185,129,0.35)' }}>{course.price}</span>
                     {/* Rating */}
@@ -545,17 +533,17 @@ const App = () => {
                   {/* Content */}
                   <div style={{ padding: '20px 22px 24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
                     {/* Category chip */}
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.25)', borderRadius: 50, padding: '4px 12px', fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#34d399', marginBottom: 12, alignSelf: 'flex-start' }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.25)', borderRadius: 50, padding: '4px 12px', fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: isDarkMode ? '#34d399' : '#059669', marginBottom: 12, alignSelf: 'flex-start' }}>
                       🎓 {course.category}
                     </span>
 
                     {/* University */}
-                    <h5 style={{ fontFamily: "'Outfit', sans-serif", fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: 4, lineHeight: 1.3 }}>{course.university}</h5>
+                    <h5 style={{ fontFamily: "'Outfit', sans-serif", fontSize: '1.1rem', fontWeight: 700, color: isDarkMode ? '#fff' : '#0f172a', marginBottom: 4, lineHeight: 1.3 }}>{course.university}</h5>
                     {/* Course Title */}
-                    <p style={{ fontSize: '0.9rem', color: '#6ee7b7', fontWeight: 600, marginBottom: 12 }}>{course.title}</p>
+                    <p style={{ fontSize: '0.9rem', color: isDarkMode ? '#6ee7b7' : '#059669', fontWeight: 600, marginBottom: 12 }}>{course.title}</p>
 
                     {/* Stats Row */}
-                    <div style={{ display: 'flex', gap: 16, marginBottom: 12, fontSize: '0.82rem', color: '#94a3b8' }}>
+                    <div style={{ display: 'flex', gap: 16, marginBottom: 12, fontSize: '0.82rem', color: isDarkMode ? '#94a3b8' : '#475569' }}>
                       <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         <span style={{ width: 24, height: 24, borderRadius: 6, background: 'rgba(16,185,129,0.1)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem' }}>👨‍🎓</span>
                         156 Students
@@ -567,15 +555,15 @@ const App = () => {
                     </div>
 
                     {/* Description */}
-                    <p style={{ fontSize: '0.85rem', color: '#94a3b8', lineHeight: 1.6, marginBottom: 16 }}>{course.description}</p>
+                    <p style={{ fontSize: '0.85rem', color: isDarkMode ? '#94a3b8' : '#475569', lineHeight: 1.6, marginBottom: 16 }}>{course.description}</p>
 
                     {/* Progress */}
                     <div style={{ marginBottom: 18 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                        <span style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#34d399' }}>Success Rate</span>
-                        <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#fff' }}>75%</span>
+                        <span style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: isDarkMode ? '#34d399' : '#059669' }}>Success Rate</span>
+                        <span style={{ fontSize: '0.72rem', fontWeight: 700, color: isDarkMode ? '#fff' : '#0f172a' }}>75%</span>
                       </div>
-                      <div style={{ background: 'rgba(255,255,255,0.08)', height: 6, borderRadius: 10, overflow: 'hidden' }}>
+                      <div style={{ background: isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.08)', height: 6, borderRadius: 10, overflow: 'hidden' }}>
                         <div style={{ width: '75%', height: '100%', borderRadius: 10, background: 'linear-gradient(90deg, #10b981, #fbbf24)', transition: 'width 1s ease' }} />
                       </div>
                     </div>
@@ -593,10 +581,11 @@ const App = () => {
                   </div>
                 </div>
               </div>
-            </Col>
-          ))}
-        </Row>
-      </section>
+              </Col>
+            ))}
+          </Row>
+        </section>
+      </div>
 
       {/* Exclusive Offer */}
       <section className="offer-section text-center position-relative">
@@ -615,7 +604,7 @@ const App = () => {
                 Subscribe to our newsletter for exclusive updates and
                 promotions.
               </p>
-              <Form className="newsletter-form">
+              <div className="newsletter-form">
                 <Row className="justify-content-center">
                   <Col md={6}>
                     <form
@@ -657,7 +646,7 @@ const App = () => {
                     </div>
                   </Col>
                 </Row>
-              </Form>
+              </div>
               <div className="offer-features mt-4">
                 <span>
                   <i className="fas fa-check-circle me-2"></i>Weekly Updates
@@ -674,31 +663,31 @@ const App = () => {
         </div>
       </section>
       {/* Footer */}
-      <footer id="contact" style={{ background: '#050806', borderTop: '1px solid rgba(16,185,129,0.15)', position: 'relative', overflow: 'hidden' }}>
+      <footer id="contact" className="landing-footer" style={{ borderTop: '1px solid rgba(16,185,129,0.2)', position: 'relative', overflow: 'hidden' }}>
         {/* Top gradient line */}
         <div style={{ height: 3, background: 'linear-gradient(90deg, transparent, #34d399, #10b981, #fbbf24, transparent)' }} />
 
         {/* Decorative glow */}
         <div style={{ position: 'absolute', top: -80, left: '50%', transform: 'translateX(-50%)', width: 400, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-        <Container style={{ padding: '60px 0 30px' }}>
+        <Container className="footer-main-container landing-inner-container" style={{ padding: '60px 24px 30px', position: 'relative', zIndex: 2 }}>
           <Row className="g-5">
             {/* Brand Column */}
             <Col lg={4} md={6}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
                 <img src="/img/kiaan_logo.png" alt="Kiaan Technology" height="48" style={{ objectFit: 'contain' }} />
                 <div>
-                  <h5 style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700, margin: 0, fontSize: '1.3rem' }}>Kiaan</h5>
+                  <h5 style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700, margin: 0, fontSize: '1.3rem', color: isDarkMode ? '#fff' : '#0f172a' }}>Kiaan</h5>
                   <span style={{ fontSize: '0.65rem', color: isDarkMode ? '#34d399' : '#059669', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 700 }}>Technology</span>
                 </div>
               </div>
-              <p style={{ color: '#94a3b8', fontSize: '0.9rem', lineHeight: 1.7, maxWidth: 300, marginBottom: 24 }}>
+              <p style={{ color: isDarkMode ? '#94a3b8' : '#475569', fontSize: '0.9rem', lineHeight: 1.7, maxWidth: 300, marginBottom: 24 }}>
                 Your trusted partner for international university admissions, visa guidance, and global career pathways.
               </p>
               {/* Social Icons */}
               <div style={{ display: 'flex', gap: 10 }}>
                 {['facebook', 'instagram', 'linkedin', 'youtube'].map((social) => (
-                  <a key={social} href="#" style={{ width: 38, height: 38, borderRadius: 10, background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#34d399', fontSize: '0.9rem', transition: 'all 0.3s ease', textDecoration: 'none' }}
+                  <a key={social} href="#" style={{ width: 38, height: 38, borderRadius: 10, background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: isDarkMode ? '#34d399' : '#059669', fontSize: '0.9rem', transition: 'all 0.3s ease', textDecoration: 'none' }}
                     onMouseEnter={e => { e.currentTarget.style.background = 'rgba(16,185,129,0.25)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
                     onMouseLeave={e => { e.currentTarget.style.background = 'rgba(16,185,129,0.1)'; e.currentTarget.style.transform = 'translateY(0)'; }}
                   >
@@ -710,29 +699,29 @@ const App = () => {
 
             {/* Quick Links */}
             <Col lg={2} md={6}>
-              <h6 style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700, color: '#34d399', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 20 }}>Quick Links</h6>
+              <h6 style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700, color: isDarkMode ? '#34d399' : '#059669', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 20 }}>Quick Links</h6>
               {['About Us', 'Courses', 'Universities', 'Apply Now', 'Blog'].map((link) => (
-                <a key={link} href="#" style={{ display: 'block', color: '#94a3b8', fontSize: '0.88rem', marginBottom: 12, textDecoration: 'none', transition: 'color 0.2s' }}
-                  onMouseEnter={e => { e.currentTarget.style.color = '#34d399'; e.currentTarget.style.paddingLeft = '4px'; }}
-                  onMouseLeave={e => { e.currentTarget.style.color = '#94a3b8'; e.currentTarget.style.paddingLeft = '0'; }}
+                <a key={link} href="#" style={{ display: 'block', color: isDarkMode ? '#94a3b8' : '#475569', fontSize: '0.88rem', marginBottom: 12, textDecoration: 'none', transition: 'color 0.2s' }}
+                  onMouseEnter={e => { e.currentTarget.style.color = '#10b981'; e.currentTarget.style.paddingLeft = '4px'; }}
+                  onMouseLeave={e => { e.currentTarget.style.color = isDarkMode ? '#94a3b8' : '#475569'; e.currentTarget.style.paddingLeft = '0'; }}
                 >{link}</a>
               ))}
             </Col>
 
             {/* Services */}
             <Col lg={3} md={6}>
-              <h6 style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700, color: '#34d399', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 20 }}>Services</h6>
+              <h6 style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700, color: isDarkMode ? '#34d399' : '#059669', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 20 }}>Services</h6>
               {['University Admissions', 'Visa Assistance', 'Career Counseling', 'Scholarship Guidance', 'Pre-Departure Support'].map((service) => (
-                <a key={service} href="#" style={{ display: 'block', color: '#94a3b8', fontSize: '0.88rem', marginBottom: 12, textDecoration: 'none', transition: 'color 0.2s' }}
-                  onMouseEnter={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.paddingLeft = '4px'; }}
-                  onMouseLeave={e => { e.currentTarget.style.color = '#94a3b8'; e.currentTarget.style.paddingLeft = '0'; }}
+                <a key={service} href="#" style={{ display: 'block', color: isDarkMode ? '#94a3b8' : '#475569', fontSize: '0.88rem', marginBottom: 12, textDecoration: 'none', transition: 'color 0.2s' }}
+                  onMouseEnter={e => { e.currentTarget.style.color = '#10b981'; e.currentTarget.style.paddingLeft = '4px'; }}
+                  onMouseLeave={e => { e.currentTarget.style.color = isDarkMode ? '#94a3b8' : '#475569'; e.currentTarget.style.paddingLeft = '0'; }}
                 >{service}</a>
               ))}
             </Col>
 
             {/* Contact Info */}
             <Col lg={3} md={6}>
-              <h6 style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700, color: '#38bdf8', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 20 }}>Contact Us</h6>
+              <h6 style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700, color: isDarkMode ? '#34d399' : '#059669', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 20 }}>Contact Us</h6>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                 {[
                   { icon: '📱', label: 'Hotline', value: '09613752752' },
@@ -740,10 +729,10 @@ const App = () => {
                   { icon: '✉️', label: 'Email', value: 'studyfirstinfo@gmail.com' },
                 ].map((item) => (
                   <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <span style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(56,189,248,0.08)', border: '1px solid rgba(56,189,248,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', flexShrink: 0 }}>{item.icon}</span>
+                    <span style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', flexShrink: 0 }}>{item.icon}</span>
                     <div>
                       <span style={{ fontSize: '0.7rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600 }}>{item.label}</span>
-                      <p style={{ margin: 0, color: '#cbd5e1', fontSize: '0.88rem' }}>{item.value}</p>
+                      <p style={{ margin: 0, color: isDarkMode ? '#cbd5e1' : '#0f172a', fontSize: '0.88rem', fontWeight: 500 }}>{item.value}</p>
                     </div>
                   </div>
                 ))}
@@ -752,8 +741,8 @@ const App = () => {
           </Row>
 
           {/* Bottom Bar */}
-          <div style={{ marginTop: 48, paddingTop: 24, borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
-            <p style={{ margin: 0, color: '#475569', fontSize: '0.82rem' }}>© 2026 Study First Info Ltd. All rights reserved.</p>
+          <div className="footer-bottom-bar" style={{ marginTop: 48, paddingTop: 24, borderTop: isDarkMode ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(15,23,42,0.08)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+            <p style={{ margin: 0, color: '#475569', fontSize: '0.82rem' }}>© 2026 Kiaan Technology. All rights reserved.</p>
             <div style={{ display: 'flex', gap: 24 }}>
               {[
                 { name: 'Privacy Policy', path: '/privacy-policy' },
@@ -761,7 +750,7 @@ const App = () => {
                 { name: 'Cookie Policy', path: '#' }
               ].map((item) => (
                 <Link key={item.name} to={item.path} style={{ color: '#475569', fontSize: '0.82rem', textDecoration: 'none', transition: 'color 0.2s' }}
-                  onMouseEnter={e => e.currentTarget.style.color = '#38bdf8'}
+                  onMouseEnter={e => e.currentTarget.style.color = '#10b981'}
                   onMouseLeave={e => e.currentTarget.style.color = '#475569'}
                 >{item.name}</Link>
               ))}

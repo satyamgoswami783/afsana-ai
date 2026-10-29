@@ -2963,7 +2963,13 @@ const Lead = ({ show, handleClose }) => {
             <Modal.Title>Add Lead</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <AddLead />
+            <AddLead
+              onClose={() => setShowModal(false)}
+              onSuccess={() => {
+                setShowModal(false);
+                fetchConvertedLeads();
+              }}
+            />
           </Modal.Body>
         </Modal>
       </div>
